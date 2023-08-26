@@ -1,0 +1,44 @@
+/* ChatListItem.module.css */
+
+.container {
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .chat-list-item {
+    overflow-y: auto;
+    height: inherit;
+   display: flex;
+   align-items: center;
+  }
+  
+  .user-avatar {
+    margin-right: 15px;
+  }
+  
+  .user-avatar img {
+    border-radius: 50%;
+  }
+  
+  .chat-details {
+    flex: 1;
+  }
+  
+  .user-name {
+    font-weight: bold;
+  }
+  
+  .last-message {
+    color: #777;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  
+  .time {
+    font-size: 12px;
+    color: #aaa;
+  }
+  
+  /* Add more styles as needed */
+  
