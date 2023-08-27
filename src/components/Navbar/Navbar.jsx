@@ -1,10 +1,50 @@
+"use client"// Navbar.js
+import React, { useState } from "react";
 import Link from "next/link";
-import styles from "./Navbar.module.css";
 import Image from "next/image";
+import styles from "./Navbar.module.css";
+import NotificationModal from "../NotificationItem/NotificationItem";
 
 export default function Navbar() {
-   const userName = "John Doe";
+  const userName = "John Doe";
   const userProfilePhoto = "/images/pic.jpg";
+  const notification = "/images/icons/notifications.png";
+
+  const [showModal, setShowModal] = useState(false);
+
+  const notifications = [
+    {
+      name: "John Doe",
+      image: "/images/pic.jpg",
+      message: "New message received.",
+    },
+    {
+      name : "John Doe",
+      image: "/images/pic.jpg",
+      message: "Friend request from Jane.",
+    },
+    {
+      name : "John Doe",
+      image: "/images/pic.jpg",
+      message: "New message received.",
+    },
+    {
+      name : "John Doe",
+      image: "/images/pic.jpg",
+      message: "New message received.",
+    },
+    {
+      name  : "John Doe",
+      image: "/images/pic.jpg",
+      message: "New message received.",
+    },
+    {
+      name : "John Doe",
+      image: "/images/pic.jpg",
+      message: "New message received.",
+    }
+  ];
+
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.logo}>
@@ -15,18 +55,24 @@ export default function Navbar() {
       </div>
       <div className={styles.userProfile}>
         <div className={styles.userName}>{userName}</div>
+        <div
+          className={styles.notification}
+          onClick={() => setShowModal(!showModal)}
+        >
+          <Image src={notification} width={40} height={40} alt="Notification Icon" />
+          {showModal && (
+            <NotificationModal notifications={notifications} />
+          )}
+        </div>
         <div className={styles.profilePhoto}>
           <Image
             src={userProfilePhoto}
             alt="user profile photo"
             width={40}
             height={40}
-           
           />
         </div>
       </div>
     </div>
   );
 }
-
-
