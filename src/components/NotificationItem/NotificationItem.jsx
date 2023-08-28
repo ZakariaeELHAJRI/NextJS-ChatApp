@@ -5,7 +5,7 @@ import styles from "./notificationItem.module.css";
 import Image from "next/image";
 
 const NotificationModal = ({ notifications, invitations, onClose }) => {
-  const [activeTab, setActiveTab] = useState("invitations");
+  const [activeTab, setActiveTab] = useState("notifications");
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -13,7 +13,7 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
 
   return (
     <div className={styles["notification-modal"]} onClick={onClose}>
-      <div className={styles["notification-list"]} onClick={(e) => e.stopPropagation()}>
+      <div className={`${styles["notification-list"]}  ${styles["customScroll"]}`} onClick={(e) => e.stopPropagation()}>
         <div className={styles["notification-header"]}>
           <h2>Notifications</h2>
           <div className={styles["tab-buttons"]}>
@@ -49,7 +49,7 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
             ))}
           </div>
         ) : (
-            <div>
+            <div >
             {invitations.map((invitation, index) => (
                 <div key={index} className={styles["invitation"]}>
                 <div className={styles["invitation-item"]}>
