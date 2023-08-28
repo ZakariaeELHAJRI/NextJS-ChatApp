@@ -1,4 +1,5 @@
 "use client"// Navbar.js
+
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,7 +12,21 @@ export default function Navbar() {
   const notification = "/images/icons/notifications.png";
 
   const [showModal, setShowModal] = useState(false);
-
+  const invitations = [
+    {
+      image: "/images/pic.jpg",
+      name: "John Doe",
+      commonFriends : 5,
+      daysAgo : 2
+    },
+    {
+      image: "/images/pic.jpg",
+      name: "Jane Smith",
+      commonFriends : 9 ,
+      daysAgo : 3
+    },
+    // Add more invitations as needed
+  ];
   const notifications = [
     {
       name: "John Doe",
@@ -44,7 +59,6 @@ export default function Navbar() {
       message: "New message received.",
     }
   ];
-
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.logo}>
@@ -61,7 +75,11 @@ export default function Navbar() {
         >
           <Image src={notification} width={40} height={40} alt="Notification Icon" />
           {showModal && (
-            <NotificationModal notifications={notifications} />
+            <NotificationModal
+              notifications={notifications}
+              invitations={invitations}
+              onClose={() => setShowModal(false)}
+            />
           )}
         </div>
         <div className={styles.profilePhoto}>
