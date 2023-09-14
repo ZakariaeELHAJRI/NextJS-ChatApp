@@ -55,4 +55,16 @@
     background-color: #dad3d3;
     color: #212121;
   }
+  /* Style for the register link */
+.registerLink {
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    margin-top: 10px; /* Adjust as needed */
+    text-align: center;
+  }
   
+  .registerLink Link {
+    color: #110891;
+    text-decoration: underline;
+    /* You can add additional styles for the link if needed */
+  }
