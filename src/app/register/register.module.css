@@ -37,7 +37,7 @@
   }
   
   .register__form__input input::placeholder {
-    color: white;
+    color: rgba(255, 255, 255, 0.4);
   }
   
   /* Styles for the country dropdown */
@@ -46,7 +46,7 @@
     padding: 10px;
     border: none;
     background-color: #212121;
-    color: white;
+    color: rgba(255, 255, 255, 0.4);
     border-radius: 5px;
     appearance: none; /* Remove default arrow in some browsers */
   }
