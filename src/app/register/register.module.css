@@ -1,0 +1,74 @@
+/* register.module.css */
+.container {
+    background-color: #212121;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .register {
+    background-color: #3b3b3b;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px;
+    text-align: center;
+    color: white;
+  }
+  
+  .register__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .register__form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .register__form__input input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #212121;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .register__form__input input::placeholder {
+    color: white;
+  }
+  
+  /* Styles for the country dropdown */
+  .register__form__input select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #212121;
+    color: white;
+    border-radius: 5px;
+    appearance: none; /* Remove default arrow in some browsers */
+  }
+  
+  .register__form__input label {
+    color: white;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  .register__form__button button {
+    width: 100%;
+    padding: 10px;
+    background-color: #212121;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .register__form__button button:hover {
+    background-color: #dad3d3;
+    color: #212121;
+  }
+  
