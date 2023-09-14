@@ -55,6 +55,9 @@
     background-color: #dad3d3;
     color: #212121;
   }
+  .login__form__input input::placeholder {
+    color: rgba(255, 255, 255, 0.4); /* Adjust the alpha (0.5 in this case) for opacity */
+  }
   /* Style for the register link */
 .registerLink {
     color: rgb(255, 255, 255);
