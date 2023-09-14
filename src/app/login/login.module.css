@@ -1,0 +1,58 @@
+/* login.module.css */
+.container {
+    background-color: #212121;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login {
+    background-color: #3b3b3b;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    text-align: center;
+    color: white;
+  }
+  
+  .login__logo img {
+    width: 70px;
+    height:70px;
+    margin-bottom: 20px;
+  }
+  
+  .login__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .login__form__input input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    background-color: #212121;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .login__form__input input::placeholder {
+    color: white;
+  }
+  
+  .login__form__button button {
+    width: 100%;
+    padding: 10px;
+    background-color: #212121;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .login__form__button button:hover {
+    background-color: #dad3d3;
+    color: #212121;
+  }
+  
