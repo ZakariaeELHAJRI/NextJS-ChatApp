@@ -10,7 +10,13 @@ export default function Navbar() {
   const userName = "John Doe";
   const userProfilePhoto = "/images/pic.jpg";
   const notification = "/images/icons/notifications.png";
+  const lougout = "/images/icons/logout.png";
 
+  // logout function 
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    window.location.href = "/login";
+  };
   const [showModal, setShowModal] = useState(false);
   const invitations = [
     {
@@ -89,6 +95,11 @@ export default function Navbar() {
             width={40}
             height={40}
           />
+        </div>
+        <div className={styles.notification}
+         onClick={logout}
+        >
+          <Image src={lougout} width={40} height={40} alt="Notification Icon" />
         </div>
       </div>
     </div>
