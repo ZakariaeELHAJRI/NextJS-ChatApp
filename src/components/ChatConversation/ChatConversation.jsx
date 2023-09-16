@@ -1,53 +1,50 @@
-import React from 'react';
-import Image from "next/image";
-import styles from "./ChatConversation.module.css";
+"use client"
+import React, { useState, useEffect } from 'react';
+import styles from './ChatConversation.module.css';
+import axios from 'axios';
+import StartChat from '@/components/StartChat/StartChat';
+import Conversation from '@/components/Conversation/Conversation';
 
-export default function ChatConversation() {
+export default function ChatConversation({ conversationId, ConversationSelected }) {
+  const [conversationData, setConversationData] = useState(null);
+  const [isConversationSelected, setIsConversationSelected] = useState(ConversationSelected);
+
+  useEffect(() => {
+    if (conversationId) {
+      fetchData();
+    }
+  }, [conversationId]);
+
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await axios.get(`http://localhost:8000/api/customconversations/${conversationId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 200) {
+        const conversation = response.data;
+        setConversationData(conversation);
+      setIsConversationSelected(false);
+      } else {
+        console.error('Error fetching conversation: ', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching conversation: ', error);
+    }
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles["chat-conversation"]}>
-        <div className={styles["chat-conversation-header"]}>
-          <div className={styles["chat-conversation-header-user"]}> 
-          <div className={styles["chat-conversation-body-message-item-user-photo"]}>
-                  <Image src="/images/pic.jpg" alt="user profile photo" width={40} height={40} />
-                </div>
-            <div className={styles["chat-conversation-header-user-name"]}>John Doe</div>
-            <div className={styles["chat-conversation-header-user-status"]}>Online</div>
-          </div>
-          <div className={styles["chat-conversation-header-options"]}>
-            <div className={styles["chat-conversation-header-options-item"]}>
-              <i className={`fas fa-video ${styles.icon}`}></i>
-              <i className={`fas fa-phone ${styles.icon}`}></i>
-              <i className={`fas fa-ellipsis-v ${styles.icon}`}></i>
-            </div>
-          </div>
-        </div>
-        <div className={styles["chat-conversation-body"]}>
-          <div className={styles["chat-conversation-body-message"]}>
-            <div className={styles["chat-conversation-body-message-item"]}>
-              <div className={styles["chat-conversation-body-message-item-user"]}>
-               
-                <div className={styles["chat-conversation-body-message-item-user-text"]}>
-                  Hello there!
-                </div>
-              </div>
-              <div className={styles["chat-conversation-body-message-item-timestamp"]}>
-                10:30 AM
-              </div>
-            </div>
-            {/* Add more message items here */}
-          </div>
-        </div>
-        <div className={styles["chat-conversation-input"]}>
-          <input
-            type="text"
-            placeholder="Type your message..."
-            className={styles["chat-conversation-input-field"]}
-          />
-          <button className={styles["chat-conversation-send-btn"]}>Send</button>
-        </div>
-      </div>
+      {isConversationSelected && conversationData !== null ? (
+        <Conversation conversationData={conversationData} />
+      ) : (
+        <StartChat />
+      )}
     </div>
   );
 }
+
+
 
