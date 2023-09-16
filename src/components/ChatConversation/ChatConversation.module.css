@@ -50,8 +50,19 @@
   
   .chat-conversation-body-message-item {
     display: flex;
-    align-items: flex-start;
     margin-bottom: 10px;
+  }
+  
+  /* Style for messages sent by the current user (right side) */
+  .right-message {
+    justify-content: flex-end; /* Align to the right */
+    text-align: right; /* Align text to the right */
+  }
+  
+  /* Style for messages received from the friend (left side) */
+  .left-message {
+    justify-content: flex-start; /* Align to the left */
+    text-align: left; /* Align text to the left */
   }
   
   .chat-conversation-body-message-item-user-photo {
