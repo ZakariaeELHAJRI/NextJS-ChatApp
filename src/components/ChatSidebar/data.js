@@ -1,62 +1,16 @@
-export const conversations = [
-    {
-      name: "John Doe",
-      message: "Hey there!",
-      time: "10:30 AM",
-      profilePhoto: "/images/pic.jpg"
-    },  
-    {
-        name: "Jane Doe",
-        message: "Hey there!",
-        time: "10:30 AM",
-        profilePhoto: "/images/pic.jpg"
-        },
-     {
-            name: "John Doe",
-            message: "Hey there!",
-            time: "10:30 AM",
-            profilePhoto: "/images/pic.jpg"
-    },
-    {
-        name: "John Doe",
-        message: "Hey there!",
-        time: "10:30 AM",
-        profilePhoto: "/images/pic.jpg"
-      },  
-      {
-          name: "Jane Doe",
-          message: "Hey there!",
-          time: "10:30 AM",
-          profilePhoto: "/images/pic.jpg"
-          },
-       {
-              name: "John Doe",
-              message: "Hey there!",
-              time: "10:30 AM",
-              profilePhoto: "/images/pic.jpg"
-      } ,
-      {
-        name: "John Doe",
-        message: "Hey there!",
-        time: "10:30 AM",
-        profilePhoto: "/images/pic.jpg"
-      },  
-      {
-          name: "Jane Doe",
-          message: "Hey there!",
-          time: "10:30 AM",
-          profilePhoto: "/images/pic.jpg"
-          },
-       {
-              name: "John Doe",
-              message: "Hey there!",
-              time: "10:30 AM",
-              profilePhoto: "/images/pic.jpg"
-      }   ,
-        {
-            name: "John Doe",
-            message: "Hey there!",
-            time: "10:30 AM",
-            profilePhoto: "/images/pic.jpg"
-            }
-  ];
+import axios from 'axios';
+
+export const fetchConversations = async () => {
+  try {
+    const token = localStorage.getItem('accessToken');
+    const response = await axios.get('http://localhost:8000/api/customconversations/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching conversations: ', error);
+    return [];
+  }
+};
