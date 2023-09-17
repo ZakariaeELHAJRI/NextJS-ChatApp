@@ -5,18 +5,24 @@ import ChatListItem from "@/components/ChatListItem/ChatListItem";
 import { fetchConversations } from './data';
 import ChatConversation from "../ChatConversation/ChatConversation";
 
-export default function ChatSidebar() {
+export default function ChatSidebar({ onItemClick }) {
   const [conversations, setConversations] = useState([]);
-  const [selectedConversationId, setSelectedConversationId] = useState(null); 
   const [isConversationSelected, setIsConversationSelected] = useState(false);
 
   useEffect(() => {
     fetchData();
+  
   }, []);
 
   const fetchData = async () => {
-    const data = await fetchConversations();
-    setConversations(data);
+    try {
+      const data = await fetchConversations();
+      setConversations(data);
+      console.log("conversations"+ JSON.stringify(data[0].current_user_id));
+      localStorage.setItem('id_current_user', data[0].current_user_id);
+    } catch (error) {
+      console.error('Error fetching conversations: ', error);
+    }
   };
   const formatTime = (time) => {
     const currentTime = new Date();
@@ -36,10 +42,11 @@ export default function ChatSidebar() {
     }
   };
   const handleChatItemClick = (conversationId) => {
-    // Set the selectedConversationId when a ChatListItem is clicked
-    setSelectedConversationId(conversationId);
-    setIsConversationSelected(true); // Set the isConversationSelected state to true
+    // Call the callback function with the clicked conversationId
+    onItemClick(conversationId);
+    setIsConversationSelected(true);
   };
+ 
   return (
     <div className={styles.container}>
       <div className={styles["chat-conversation"]}>
@@ -47,20 +54,17 @@ export default function ChatSidebar() {
           <div className={`${styles["conversation-list"]} ${styles["customScroll"]}`}>
             {conversations.map((conversation, index) => (
               <ChatListItem
-                key={index}
-                name={conversation.name}
-                message={conversation.message}
-                time={formatTime(conversation.time)}
-                profilePhoto="/images/icons/user.png" // Static profile photo
-                onClick={() => handleChatItemClick(conversation.id)} 
-              />
+              key={conversation.id}
+              name={conversation.name}
+              message={conversation.message}
+              time={formatTime(conversation.time)}
+              profilePhoto="/images/icons/user.png" // Static profile photo
+              onClick={() => handleChatItemClick(conversation.id)} 
+            />
             ))}
           </div>
         </div>
       </div>
-      {selectedConversationId !== null && (
-        <ChatConversation conversationId={selectedConversationId} ConversationSelected={isConversationSelected}/> 
-      )}
     </div>
   );
 }
