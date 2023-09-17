@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ChatConversation.module.css';
 import axios from 'axios';
-import StartChat from '@/components/StartChat/StartChat';
-import Conversation from '@/components/Conversation/Conversation';
 
-export default function ChatConversation({ conversationId, ConversationSelected }) {
+import Conversation from '@/components/Conversation/Conversation';
+import StartChat from '@/components/StartChat/StartChat';
+
+export default function ChatConversation({ conversationId, socket }) { // Add 'socket' prop here
   const [conversationData, setConversationData] = useState(null);
-  const [isConversationSelected, setIsConversationSelected] = useState(ConversationSelected);
+  const [isEmpty, setIsEmpty] = useState(true);
 
   useEffect(() => {
     if (conversationId) {
@@ -26,7 +27,8 @@ export default function ChatConversation({ conversationId, ConversationSelected 
       if (response.status === 200) {
         const conversation = response.data;
         setConversationData(conversation);
-      setIsConversationSelected(false);
+        console.log(conversation);
+        setIsEmpty(false);
       } else {
         console.error('Error fetching conversation: ', response.statusText);
       }
@@ -37,14 +39,21 @@ export default function ChatConversation({ conversationId, ConversationSelected 
 
   return (
     <div className={styles.container}>
-      {isConversationSelected && conversationData !== null ? (
-        <Conversation conversationData={conversationData} />
-      ) : (
+      {isEmpty ? (
         <StartChat />
+      ) : (
+        <Conversation conversationData={conversationData} socket={socket} /> // Pass 'socket' prop here
       )}
     </div>
   );
 }
+
+
+
+
+
+
+
 
 
 
