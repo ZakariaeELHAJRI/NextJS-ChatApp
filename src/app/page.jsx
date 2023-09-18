@@ -7,7 +7,7 @@ import Footer from '@/components/Footer/Footer';
 import ChatSidebar from '@/components/ChatSidebar/ChatSidebar';
 import ChatConversation from '@/components/ChatConversation/ChatConversation';
 import jwtDecode from 'jwt-decode'; // Import jwt-decode library
-import io from 'socket.io-client'; // Import socket.io-client
+
 
 
 export default function Home() {
@@ -16,9 +16,7 @@ export default function Home() {
   // verify token usestate
   const [isTokenValid, setIsTokenValid] = useState(false);
   const router = useRouter();
-// get user id from local storage
-  const id_current_user = localStorage.getItem('id_current_user');
-  const socket = io('http://localhost:8000/ws/' + id_current_user);
+
 
   // Callback function to update the selectedConversationId
   const handleConversationSelect = (conversationId) => {
@@ -49,10 +47,7 @@ export default function Home() {
       router.push('/login');
     }
 
-    // Cleanup the socket connection when the component unmounts
-    return () => {
-      socket.disconnect();
-    };
+   
   }, []);
 
   if (isLoading) {
@@ -68,7 +63,7 @@ export default function Home() {
             <ChatSidebar onItemClick={handleConversationSelect} />
           </div>
           <div className={styles.rightSide}>
-            <ChatConversation conversationId={selectedConversationId} socket={socket} /> {/* Pass socket as a prop */}
+            <ChatConversation conversationId={selectedConversationId}/> 
           </div>
         </main>
         <Footer />
