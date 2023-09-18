@@ -5,70 +5,48 @@ import styles from '@/components/ChatConversation/ChatConversation.module.css';
 import StartChat from '@/components/StartChat/StartChat';
 import axios from 'axios';
 
-export default function Conversation({ conversationData, socket }) {
+export default function Conversation({ conversationData }) {
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([]);
-  console.log("socket "+socket);
+
   useEffect(() => {
     setMessages(conversationData.messages);
-    console.log("ooooooo"+conversationData.messages);
-    if (!conversationData || !socket) return;
-    console.log("code broke here");
-    // Initialize messages with conversationData messages
-    const handleNewMessage = (data) => {
-      if (data.conversationId === conversationData.id) {
-        setMessages((prevMessages) => [...prevMessages, data]);
-      }
-    };
-
-    // Listen for incoming messages via WebSocket when the component mounts
-    socket.on('message', handleNewMessage);
-
-    // Clean up the socket listener when the component unmounts
-    return () => {
-      socket.off('message', handleNewMessage);
-    };
-  }, [conversationData, socket]);
+    console.log("conversationData id     :"+ conversationData.id);
+  }, [conversationData]);
 
   const sendMessage = async () => {
-    if (!messageInput.trim() || !socket) return;
-  
-    // Send the message via WebSocket
-    socket.emit('send_message', {
-      conversationId: conversationData.id,
-      content: messageInput,
-    });
-  
+    if (!messageInput.trim()) return;
+
     // Update the local messages state
     const newMessage = {
+      conversation_id: conversationData.id,
       content: messageInput,
       sender_id: conversationData.current_user_id,
+      receiver_id: conversationData.friend_id,
       time: new Date().toLocaleTimeString(),
     };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-  
+
     // Clear the message input field
     setMessageInput('');
-  
+    console.log("newMessage"+ JSON.stringify(newMessage));
     try {
       // Send the message to the server using axios
       const token = localStorage.getItem('accessToken');
-    const data =  await axios.post('http://localhost:8000/api/messages/', {
+      await axios.post('http://localhost:8000/api/messages/', {
         conversation_id: conversationData.id,
         content: messageInput,
         sender_id: conversationData.current_user_id,
-        receiver_id: conversationData.friend_id, 
+        receiver_id: conversationData.friend_id,
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("data"+data);
     } catch (error) {
       console.error('Error sending message to the server:', error);
     }
   };
-  
 
   if (!conversationData) {
     return <StartChat />;
