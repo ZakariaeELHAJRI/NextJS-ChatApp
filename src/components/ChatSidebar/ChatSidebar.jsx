@@ -18,7 +18,7 @@ export default function ChatSidebar({ onItemClick }) {
     try {
       const data = await fetchConversations();
       setConversations(data);
-      console.log("conversations"+ JSON.stringify(data[0].current_user_id));
+    //  console.log("conversations"+ JSON.stringify(data[0].current_user_id));
       localStorage.setItem('id_current_user', data[0].current_user_id);
     } catch (error) {
       console.error('Error fetching conversations: ', error);
