@@ -6,7 +6,7 @@ import axios from 'axios';
 import Conversation from '@/components/Conversation/Conversation';
 import StartChat from '@/components/StartChat/StartChat';
 
-export default function ChatConversation({ conversationId, socket }) { // Add 'socket' prop here
+export default function ChatConversation({ conversationId }) { 
   const [conversationData, setConversationData] = useState(null);
   const [isEmpty, setIsEmpty] = useState(true);
 
@@ -42,7 +42,7 @@ export default function ChatConversation({ conversationId, socket }) { // Add 's
       {isEmpty ? (
         <StartChat />
       ) : (
-        <Conversation conversationData={conversationData} socket={socket} /> // Pass 'socket' prop here
+        <Conversation conversationData={conversationData}  /> 
       )}
     </div>
   );
