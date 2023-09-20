@@ -4,48 +4,81 @@ import Image from 'next/image';
 import styles from '@/components/ChatConversation/ChatConversation.module.css';
 import StartChat from '@/components/StartChat/StartChat';
 import axios from 'axios';
+import io from 'socket.io-client'; // Import socket.io-client
+import socketIO from 'socket.io-client';
 
 export default function Conversation({ conversationData }) {
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([]);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     setMessages(conversationData.messages);
-    console.log("conversationData id     :"+ conversationData.id);
+    // Retrieve the authentication token from localStorage
+    const token = localStorage.getItem('accessToken');
+
+    // Check if the token is available
+    if (token) {
+      const wsUrl = `ws://localhost:8000/ws/${conversationData.current_user_id}?token=${token}`;
+      const newSocket = new WebSocket(wsUrl);
+
+      // WebSocket event listeners
+      newSocket.addEventListener('open', (event) => {
+        console.log("WebSocket connection opened:", event);
+      });
+
+      newSocket.addEventListener('message', (event) => {
+        console.log("WebSocket message received:", event.data);
+      
+        try {
+          // Try to parse the received message as JSON
+          const newMessage = JSON.parse(event.data);
+      
+          // Update the messages state with the new message
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        } catch (error) {
+          // Handle non-JSON messages here
+          console.error("Received non-JSON message:", event.data);
+        }
+      });
+      
+
+      newSocket.addEventListener('close', (event) => {
+        console.log("WebSocket connection closed:", event);
+      });
+
+      newSocket.addEventListener('error', (error) => {
+        console.error("WebSocket error:", error);
+      });
+
+      setSocket(newSocket);
+
+      return () => {
+        // Close the WebSocket connection when the component unmounts
+        newSocket.close();
+      };
+    }
   }, [conversationData]);
 
-  const sendMessage = async () => {
+  // Send a message to the server
+  const sendMessage = () => {
     if (!messageInput.trim()) return;
 
-    // Update the local messages state
     const newMessage = {
-      conversation_id: conversationData.id,
+      event: "message",
       content: messageInput,
       sender_id: conversationData.current_user_id,
       receiver_id: conversationData.friend_id,
       time: new Date().toLocaleTimeString(),
+      conversation_id: conversationData.id,
     };
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    // Emit the 'send_message' event with the message data
+    socket.send(JSON.stringify(newMessage));
+    console.log("WebSocket message sent:", newMessage);
 
     // Clear the message input field
     setMessageInput('');
-    console.log("newMessage"+ JSON.stringify(newMessage));
-    try {
-      // Send the message to the server using axios
-      const token = localStorage.getItem('accessToken');
-      await axios.post('http://localhost:8000/api/messages/', {
-        conversation_id: conversationData.id,
-        content: messageInput,
-        sender_id: conversationData.current_user_id,
-        receiver_id: conversationData.friend_id,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    } catch (error) {
-      console.error('Error sending message to the server:', error);
-    }
   };
 
   if (!conversationData) {
