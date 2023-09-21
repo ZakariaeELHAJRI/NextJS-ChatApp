@@ -2,20 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ChatConversation.module.css';
 import axios from 'axios';
-
 import Conversation from '@/components/Conversation/Conversation';
 import StartChat from '@/components/StartChat/StartChat';
-
 export default function ChatConversation({ conversationId }) { 
   const [conversationData, setConversationData] = useState(null);
   const [isEmpty, setIsEmpty] = useState(true);
-
   useEffect(() => {
     if (conversationId) {
       fetchData();
     }
   }, [conversationId]);
-
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('accessToken');
@@ -36,7 +32,6 @@ export default function ChatConversation({ conversationId }) {
       console.error('Error fetching conversation: ', error);
     }
   };
-
   return (
     <div className={styles.container}>
       {isEmpty ? (
