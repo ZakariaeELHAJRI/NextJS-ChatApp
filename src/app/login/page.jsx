@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import styles from './login.module.css';
 import axios from 'axios';
+import jwtDecode from 'jwt-decode';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -11,16 +12,18 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        'http://localhost:8000/token',
-        {
+      const response = await axios.post('http://localhost:8000/token', {
           username,
           password,
         }
       );
       const accessToken = response.data.access_token;
+      // decode the token to get the username
+      const decodedToken = jwtDecode(accessToken);
       localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('username', decodedToken.sub);
       console.log(accessToken);
+      console.log(username);
       window.location.href = '/';
     } catch (error) {
       console.error('Login failed:', error);
