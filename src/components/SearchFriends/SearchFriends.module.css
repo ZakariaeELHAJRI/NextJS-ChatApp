@@ -1,0 +1,168 @@
+
+.notification-modal {
+    position: absolute;
+    top: 80px; /* Adjust as needed */
+    background-color: rgb(48, 46, 46);
+    border: 1px solid #ccc;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    border-radius: 5px;
+    width: 350px;
+    padding: 8px;
+    height: 60%;
+}
+
+.notification-list {
+    padding: 10px;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+
+.notification-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.userImage {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.commonImage {
+    width: 15px !important;
+    height: 15px !important;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.notification-item p {
+    margin: 0;
+    font-size: 14px;
+    color: #dfdfdf;
+    line-height: 1.3;
+}
+
+.notification-item p strong {
+    font-weight: bold;
+}
+
+.notification-modal button {
+margin-top: 10px;
+    background-color: #7a7373;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.notification-modal button:hover {
+    background-color: #ddd;
+}
+
+.tab-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px;
+    margin-bottom: 15px;
+}
+/* Corresponding styles */
+.invitation {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .invitation-item {
+    display: flex;
+  
+    width: 100%;
+    align-items: center;
+  }
+  
+  .userImage {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .invitationContent {
+    display: flex;
+    justify-content: space-between;
+
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .commonFriends {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    color: #ccc;
+    font-size: 12px;
+  }
+  
+  .commonFriends span {
+    margin-left: 5px;
+  }
+  
+  .invitation-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .daysAgo {
+    margin-top: -20px;
+    
+    color: #ccc;
+    font-size: 12px;
+    margin-right: 10px;
+  }
+  
+  .acceptButton,
+  .refuseButton {
+    background-color: #d4cdcd;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .acceptButton:hover,
+  .refuseButton:hover {
+    background-color: #ddd;
+  }
+  
+
+   
+.customScroll::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 20px;
+	background-color: #F5F5F5;
+}
+
+.customScroll::-webkit-scrollbar
+{
+	width: 8px;
+    border-radius: 20px;
+	background-color: #F5F5F5;
+}
+
+.customScroll::-webkit-scrollbar-thumb
+{
+    border-radius: 20px;
+	background-color: #2c272780;
+}
