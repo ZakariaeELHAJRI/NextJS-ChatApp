@@ -4,16 +4,24 @@
     display: flex;
     justify-content: center;
     width: 100%;
-  
-  }
+    max-height: 100vh;
+    overflow: hidden;
+}
   
   .chat-conversation {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+
     background-color: #f2f2f2;
     border-radius: 10px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
     width: inherit;
     padding: 20px;
     position: relative; /* Position for absolute elements */
+ 
   }
   
   .chat-conversation-header {
@@ -44,8 +52,10 @@
   }
   
   .chat-conversation-body {
-    height: 600px; /* Adjust the height as needed */
+    height: 64vh;
     overflow-y: auto;
+    padding: 0 15px;
+    margin-bottom:  20px;
   }
   
   .chat-conversation-body-message-item {
