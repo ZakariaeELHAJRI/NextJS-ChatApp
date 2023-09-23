@@ -17,22 +17,7 @@ export default function Navbar() {
   const [showSearchModal, setShowSearchModal] = useState(false); // State for the search modal
   const modalRef = useRef(null);
   const [users, setUsers] = useState([]);
-
-  const invitations = [
-    {
-      image: "/images/pic.jpg",
-      name: "John Doe",
-      commonFriends: 5,
-      daysAgo: 2,
-    },
-    {
-      image: "/images/pic.jpg",
-      name: "Jane Smith",
-      commonFriends: 9,
-      daysAgo: 3,
-    },
-    // Add more invitations as needed
-  ];
+  const [invitations, setInvitations] = useState([]);
 
   const notifications = [
     {
@@ -66,8 +51,8 @@ export default function Navbar() {
 
     fetchData();
   }, []);
+
   useEffect(() => {
-    
     const handleOutsideClick = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
         setShowModal(false);
@@ -86,6 +71,12 @@ export default function Navbar() {
     };
   }, [showModal]);
 
+  // Callback function to handle received invitations
+  const handleReceivedInvitation = (invitationData) => {
+    // Update the invitations state with the new invitation
+    setInvitations((prevInvitations) => [...prevInvitations, invitationData]);
+  };
+
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.logo}>
@@ -99,7 +90,8 @@ export default function Navbar() {
         />
         {showSearchModal && (
           <div className={styles.searchModal} ref={modalRef}>
-            <SearchFriends UsersList={users} /> 
+            {/* Pass the callback function to SearchFriends component */}
+            <SearchFriends UsersList={users} onReceivedInvitation={handleReceivedInvitation} /> 
           </div>
         )}
       </div>
