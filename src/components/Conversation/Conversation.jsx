@@ -3,60 +3,23 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from '@/components/ChatConversation/ChatConversation.module.css';
 import StartChat from '@/components/StartChat/StartChat';
-import axios from 'axios';
-import io from 'socket.io-client'; // Import socket.io-client
-import socketIO from 'socket.io-client';
+import {sendWebSocketMessage ,receiveWebSocketMessage } from '@/app/Utils/websocket';
+import { useWebSocket } from '@/context/WebSocketContext';
 
 export default function Conversation({ conversationData }) {
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState(null);
+  const {socket} = useWebSocket();
 
   useEffect(() => {
     setMessages(conversationData.messages);
-    // Retrieve the authentication token from localStorage
     const token = localStorage.getItem('accessToken');
-
-    // Check if the token is available
     if (token) {
-      const wsUrl = `ws://localhost:8000/ws/${conversationData.current_user_id}?token=${token}`;
-      const newSocket = new WebSocket(wsUrl);
-
-      // WebSocket event listeners
-      newSocket.addEventListener('open', (event) => {
-        console.log("WebSocket connection opened:", event);
-      });
-
-      newSocket.addEventListener('message', (event) => {
-        console.log("WebSocket message received:", event.data);
-      
-        try {
-          // Try to parse the received message as JSON
-          const newMessage = JSON.parse(event.data);
-      
-          // Update the messages state with the new message
+     
+        receiveWebSocketMessage(socket, (newMessage) => {
           setMessages((prevMessages) => [...prevMessages, newMessage]);
-        } catch (error) {
-          // Handle non-JSON messages here
-          console.error("Received non-JSON message:", event.data);
-        }
-      });
-      
-
-      newSocket.addEventListener('close', (event) => {
-        console.log("WebSocket connection closed:", event);
-      });
-
-      newSocket.addEventListener('error', (error) => {
-        console.error("WebSocket error:", error);
-      });
-
-      setSocket(newSocket);
-
-      return () => {
-        // Close the WebSocket connection when the component unmounts
-        newSocket.close();
-      };
+        });
+     
     }
   }, [conversationData]);
 
@@ -65,7 +28,7 @@ export default function Conversation({ conversationData }) {
     if (!messageInput.trim()) return;
 
     const newMessage = {
-      event: "message",
+      event: 'message',
       content: messageInput,
       sender_id: conversationData.current_user_id,
       receiver_id: conversationData.friend_id,
@@ -74,8 +37,8 @@ export default function Conversation({ conversationData }) {
     };
 
     // Emit the 'send_message' event with the message data
-    socket.send(JSON.stringify(newMessage));
-    console.log("WebSocket message sent:", newMessage);
+    sendWebSocketMessage(socket, newMessage);
+    console.log('WebSocket message sent:', newMessage);
 
     // Clear the message input field
     setMessageInput('');
