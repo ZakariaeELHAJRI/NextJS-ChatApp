@@ -6,18 +6,20 @@ import styles from "./Navbar.module.css";
 import NotificationModal from "../NotificationItem/NotificationItem";
 import SearchFriends from "../SearchFriends/SearchFriends"; 
 import {fetchUsers} from "../SearchFriends/data";
+import { useWebSocket } from "@/context/WebSocketContext";
+
 
 export default function Navbar() {
   const userName = "John Doe";
   const userProfilePhoto = "/images/pic.jpg";
   const notification = "/images/icons/notifications.png";
   const logoutIcon = "/images/icons/logout.png";
-
+ const {invitations}= useWebSocket();
   const [showModal, setShowModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false); // State for the search modal
   const modalRef = useRef(null);
   const [users, setUsers] = useState([]);
-  const [invitations, setInvitations] = useState([]);
+ 
 
   const notifications = [
     {
@@ -71,11 +73,11 @@ export default function Navbar() {
     };
   }, [showModal]);
 
-  // Callback function to handle received invitations
+  /* Callback function to handle received invitations
   const handleReceivedInvitation = (invitationData) => {
     // Update the invitations state with the new invitation
     setInvitations((prevInvitations) => [...prevInvitations, invitationData]);
-  };
+  };*/
 
   return (
     <div className={styles.container}>
@@ -91,7 +93,7 @@ export default function Navbar() {
         {showSearchModal && (
           <div className={styles.searchModal} ref={modalRef}>
             {/* Pass the callback function to SearchFriends component */}
-            <SearchFriends UsersList={users} onReceivedInvitation={handleReceivedInvitation} /> 
+            <SearchFriends UsersList={users}  /> 
           </div>
         )}
       </div>
