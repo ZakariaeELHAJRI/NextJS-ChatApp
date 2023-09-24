@@ -1,7 +1,7 @@
 "use client"
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import { initializeSocket } from '../app/Utils/websocket';
+import { initializeSocket, receiveWebSocketInvitations } from '../app/Utils/websocket';
 import { useRouter } from 'next/navigation';
 import axios from 'axios'; // Import axios for making API requests
 
@@ -12,6 +12,7 @@ export const WebSocketProvider = ({ children }) => {
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [invitations, setInvitations] = useState([]);
   const router = useRouter();
 
   const fetchUserByUsername = async (username) => {
@@ -41,26 +42,24 @@ export const WebSocketProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     const username = localStorage.getItem('username');
-
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
         const currentTime = Math.floor(Date.now() / 1000);
         if (decodedToken.exp > currentTime) {
           // Token is valid
-          setIsLoading(true); // Set isLoading to true while fetching user data
-          
+          setIsLoading(true);
           fetchUserByUsername(username)
             .then((userData) => {
               const userId = userData.id;
               const newSocket = initializeSocket(userId, token);
               setSocket(newSocket);
               setIsTokenValid(true);
-              setIsLoading(false); // Set isLoading to false once user data and socket are set
+              setIsLoading(false);
             })
             .catch((error) => {
               console.error('Error fetching user data:', error);
-              setIsLoading(false); // Set isLoading to false in case of an error
+              setIsLoading(false);
             });
         } else {
           // Token is expired
@@ -81,8 +80,15 @@ export const WebSocketProvider = ({ children }) => {
     }
   }, [socket, router]);
 
+  // Separate useEffect for receiving invitations with only 'socket' as a dependency
+  useEffect(() => {
+    if (socket) {
+      receiveWebSocketInvitations(socket, setInvitations);
+    }
+  }, [socket]);
+
   return (
-    <WebSocketContext.Provider value={{ socket, isTokenValid, isLoading }}>
+    <WebSocketContext.Provider value={{ socket, isTokenValid, isLoading, invitations }}>
       {children}
     </WebSocketContext.Provider>
   );
