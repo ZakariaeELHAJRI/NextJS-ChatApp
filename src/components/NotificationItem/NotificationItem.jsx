@@ -54,7 +54,7 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
                 <div key={index} className={styles["invitation"]}>
                 <div className={styles["invitation-item"]}>
                     <Image
-                    src={invitation.image}
+                    src="/images/pic.jpg"
                     alt="User"
                     width={40}
                     height={40}
@@ -62,7 +62,7 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
                     />
                     <div className={styles.invitationContent}>
 
-                    <p> <strong>{invitation.name}</strong> </p>
+                    <p> <strong>{invitation.user_name}</strong> </p>
                   
                     <div className={styles.commonFriends}>
                         <Image
