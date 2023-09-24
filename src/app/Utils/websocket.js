@@ -71,12 +71,14 @@ export const sendInvitation = (invitationData) => {
   };
   
 
-  export const receiveWebSocketInvitation = (socket, onReceivedInvitation) => {
+
+
+  export const receiveWebSocketInvitations = (socket, setInvitationState) => {
     socket.addEventListener('message', (event) => {
       try {
         const data = JSON.parse(event.data);
         console.log('WebSocket invitation received:', data);
-        onReceivedInvitation(data);
+        setInvitationState((prevInvitations) => [...prevInvitations, data]);
       } catch (error) {
         console.error('Received non-JSON message:', event.data);
       }
