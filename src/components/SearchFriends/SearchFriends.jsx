@@ -7,11 +7,13 @@ import {
   receiveWebSocketInvitation,
 } from '@/app/Utils/websocket';
 import { useWebSocket } from '@/context/WebSocketContext';
-export default function SearchFriends({ UsersList, onReceivedInvitation }) {
+export default function SearchFriends({ UsersList }) {
   const [friends, setFriends] = useState([]);
   const {socket} = useWebSocket();
   const [current_user, setCurrentUser] = useState(null);
   const userProfilePhoto = '/images/pic.jpg';
+    // Declare the addFriendDisabled state variable
+    const [addFriendDisabled, setAddFriendDisabled] = useState([]);
 
   useEffect(() => {
     const currentUserString = localStorage.getItem('currentUser');
@@ -28,17 +30,25 @@ export default function SearchFriends({ UsersList, onReceivedInvitation }) {
 
 
       // Use the receiveWebSocketInvitation function to handle invitations
-    receiveWebSocketInvitation(socket, onReceivedInvitation);
+
     }
-  }, [current_user, onReceivedInvitation]);
+  }, [current_user]);
 
   const handleAddFriend = (index) => {
     const friendToAdd = friends[index];
-
+    // Disable the "Add Friend" button
+    setAddFriendDisabled((prevDisabled) => {
+        const newDisabled = [...prevDisabled];
+        newDisabled[index] = true;
+        return newDisabled;
+      });
+    
     const data = {
       event: 'invitation',
       user_id: current_user.id,
       friend_id: friendToAdd.id,
+      user_name: `${current_user.firstname} ${current_user.lastname}`,
+
     };
 
     sendInvitation(data);
@@ -100,6 +110,7 @@ export default function SearchFriends({ UsersList, onReceivedInvitation }) {
               <button
                 className={styles.acceptButton}
                 onClick={() => handleAddFriend(index)}
+                disabled={addFriendDisabled[index]}
               >
                 Add Friend
               </button>
