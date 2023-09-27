@@ -1,11 +1,76 @@
 "use client"
-// NotificationModal.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./notificationItem.module.css";
 import Image from "next/image";
+import axios from "axios";
+
+const NotificationItem = ({ invitation }) => {
+  return (
+    <div className={styles["invitation"]}>
+      <div className={styles["invitation-item"]}>
+        <Image
+          src="/images/pic.jpg"
+          alt="User"
+          width={40}
+          height={40}
+          className={styles.userImage}
+        />
+        <div className={styles.invitationContent}>
+          <p><strong>{invitation.friend_first_name} {invitation.friend_last_name}</strong></p>
+          <div className={styles.commonFriends}>
+            <Image
+              src="/images/pic.jpg"
+              alt="Common Friends"
+              width={20}
+              height={20}
+              className={styles.commonImage}
+            />
+            <span>{invitation.commonFriends} friends in common</span>
+          </div>
+        </div>
+        <p className={styles.daysAgo}>{invitation.daysAgo} days ago</p>
+      </div>
+      <div className={styles["invitation-buttons"]}>
+        <button className={styles.acceptButton}>Accept</button>
+        <button className={styles.refuseButton}>Refuse</button>
+      </div>
+    </div>
+  );
+};
 
 const NotificationModal = ({ notifications, invitations, onClose }) => {
   const [activeTab, setActiveTab] = useState("notifications");
+  const [allInvitations, setAllInvitations] = useState([]);
+  
+  useEffect(() => {
+    const { id: currentUserId } = JSON.parse(localStorage.getItem('currentUser'));
+    
+    const fetchInvitations = async () => {
+      try {
+        const token = localStorage.getItem('accessToken');
+        const response = await axios.get(`http://localhost:8000/api/friendships/${currentUserId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("Invitations from database:", response.data);
+    
+       const databaseInvitations = response.data;
+    
+        if (databaseInvitations.length > 0) {
+          const combinedInvitations = [...databaseInvitations, ...invitations];
+          setAllInvitations(combinedInvitations);
+          console.log("All invitations:", combinedInvitations);
+        } else {
+          setAllInvitations(invitations);
+        }
+      } catch (error) {
+        console.error("Error fetching invitations:", error);
+      }
+    };
+
+    fetchInvitations();
+  }, [invitations]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -49,42 +114,11 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
             ))}
           </div>
         ) : (
-            <div >
-            {invitations.map((invitation, index) => (
-                <div key={index} className={styles["invitation"]}>
-                <div className={styles["invitation-item"]}>
-                    <Image
-                    src="/images/pic.jpg"
-                    alt="User"
-                    width={40}
-                    height={40}
-                    className={styles.userImage}
-                    />
-                    <div className={styles.invitationContent}>
-
-                    <p> <strong>{invitation.user_name}</strong> </p>
-                  
-                    <div className={styles.commonFriends}>
-                        <Image
-                        src="/images/pic.jpg"
-                        alt="Common Friends"
-                        width={20}
-                        height={20}
-                        className={styles.commonImage}
-                        />
-                        <span>{invitation.commonFriends} friends in common</span>
-                    </div>
-
-                    </div>
-                    <p className={styles.daysAgo}> {invitation.daysAgo} days ago </p>
-                </div>
-                <div className={styles["invitation-buttons"]}>
-                    <button className={styles.acceptButton}>Accept</button>
-                    <button className={styles.refuseButton}>Refuse</button>
-                </div>
-                </div>
+          <div>
+            {allInvitations.map((invitation, index) => (
+              <NotificationItem key={index} invitation={invitation} />
             ))}
-            </div>
+          </div>
         )}
       </div>
     </div>
