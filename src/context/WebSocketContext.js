@@ -84,6 +84,7 @@ export const WebSocketProvider = ({ children }) => {
   useEffect(() => {
     if (socket) {
       receiveWebSocketInvitations(socket, setInvitations);
+     
     }
   }, [socket]);
 
