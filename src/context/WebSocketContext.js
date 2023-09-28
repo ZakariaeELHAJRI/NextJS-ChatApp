@@ -1,7 +1,7 @@
 "use client"
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import { initializeSocket, receiveWebSocketInvitations } from '../app/Utils/websocket';
+import { initializeSocket, receiveWebSocketInvitations, recieveWebSocketAcceptance } from '../app/Utils/websocket';
 import { useRouter } from 'next/navigation';
 import axios from 'axios'; // Import axios for making API requests
 
@@ -13,6 +13,7 @@ export const WebSocketProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [invitations, setInvitations] = useState([]);
+  const [acceptances, setAcceptances] = useState([]); // Add this line
   const router = useRouter();
 
   const fetchUserByUsername = async (username) => {
@@ -83,13 +84,14 @@ export const WebSocketProvider = ({ children }) => {
   // Separate useEffect for receiving invitations with only 'socket' as a dependency
   useEffect(() => {
     if (socket) {
-      receiveWebSocketInvitations(socket, setInvitations);
-     
+
+          receiveWebSocketInvitations(socket, setInvitations);
+          recieveWebSocketAcceptance(socket, setAcceptances);
     }
   }, [socket]);
 
   return (
-    <WebSocketContext.Provider value={{ socket, isTokenValid, isLoading, invitations }}>
+    <WebSocketContext.Provider value={{ socket, isTokenValid, isLoading, invitations, acceptances }}>
       {children}
     </WebSocketContext.Provider>
   );
