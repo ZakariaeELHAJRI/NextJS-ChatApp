@@ -7,20 +7,34 @@ import {
   receiveWebSocketInvitation,
 } from '@/app/Utils/websocket';
 import { useWebSocket } from '@/context/WebSocketContext';
+
 export default function SearchFriends({ UsersList }) {
   const [friends, setFriends] = useState([]);
-  const {socket} = useWebSocket();
+  const { socket } = useWebSocket();
   const [current_user, setCurrentUser] = useState(null);
   const userProfilePhoto = '/images/pic.jpg';
-    // Declare the addFriendDisabled state variable
-    const [addFriendDisabled, setAddFriendDisabled] = useState([]);
+
+  // Declare the addFriendDisabled state variable as an array of booleans
+  const [addFriendDisabled, setAddFriendDisabled] = useState([]);
+
+  // Declare a new state variable to track whether to display the "Send Message" button
+  const [displaySendMessage, setDisplaySendMessage] = useState([]);
 
   useEffect(() => {
     const currentUserString = localStorage.getItem('currentUser');
     const currentUser = JSON.parse(currentUserString);
     setFriends(UsersList);
     setCurrentUser(currentUser);
-  }, []);
+
+    // Initialize the addFriendDisabled and displaySendMessage states based on friendship_status
+    const initialDisabledState = UsersList.map((user) => user.friendship_status === 'pending');
+    setAddFriendDisabled(initialDisabledState);
+
+    const initialDisplaySendMessageState = UsersList.map(
+      (user) => user.friendship_status === 'accepted'
+    );
+    setDisplaySendMessage(initialDisplaySendMessageState);
+  }, [UsersList]);
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -28,27 +42,25 @@ export default function SearchFriends({ UsersList }) {
     if (token && current_user) {
       const current_user_id = current_user.id;
 
-
       // Use the receiveWebSocketInvitation function to handle invitations
-
     }
   }, [current_user]);
 
   const handleAddFriend = (index) => {
     const friendToAdd = friends[index];
+
     // Disable the "Add Friend" button
     setAddFriendDisabled((prevDisabled) => {
-        const newDisabled = [...prevDisabled];
-        newDisabled[index] = true;
-        return newDisabled;
-      });
-    
+      const newDisabled = [...prevDisabled];
+      newDisabled[index] = true;
+      return newDisabled;
+    });
+
     const data = {
       event: 'invitation',
       user_id: current_user.id,
       friend_id: friendToAdd.id,
       user_name: `${current_user.firstname} ${current_user.lastname}`,
-
     };
 
     sendInvitation(data);
@@ -70,6 +82,10 @@ export default function SearchFriends({ UsersList }) {
 
   const handleRefuse = (index) => {
     // Implement this functionality as needed
+  };
+
+  const handleSendMessage = (index) => {
+    // Implement the logic to handle sending a message to the selected friend
   };
 
   return (
@@ -107,13 +123,22 @@ export default function SearchFriends({ UsersList }) {
               </div>
             </div>
             <div className={styles['invitation-buttons']}>
-              <button
-                className={styles.acceptButton}
-                onClick={() => handleAddFriend(index)}
-                disabled={addFriendDisabled[index]}
-              >
-                Add Friend
-              </button>
+              {displaySendMessage[index] ? ( // Display "Send Message" button if friendship_status is 'accepted'
+                <button
+                  className={styles.sendMessageButton}
+                  onClick={() => handleSendMessage(index)}
+                >
+                  Send Message
+                </button>
+              ) : (
+                <button
+                  className={styles.acceptButton}
+                  onClick={() => handleAddFriend(index)}
+                  disabled={addFriendDisabled[index]}
+                >
+                  Add Friend
+                </button>
+              )}
               <button
                 className={styles.refuseButton}
                 onClick={() => handleRefuse(index)}
