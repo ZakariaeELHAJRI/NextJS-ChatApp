@@ -10,7 +10,7 @@ import { useWebSocket } from "@/context/WebSocketContext";
 
 
 export default function Navbar() {
-  const userName = "John Doe";
+  const [fullName, setFullName] = useState("");
   const userProfilePhoto = "/images/pic.jpg";
   const notification = "/images/icons/notifications.png";
   const logoutIcon = "/images/icons/logout.png";
@@ -19,6 +19,7 @@ export default function Navbar() {
   const [showSearchModal, setShowSearchModal] = useState(false); // State for the search modal
   const modalRef = useRef(null);
   const [users, setUsers] = useState([]);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
  
 
   const notifications = [
@@ -32,9 +33,38 @@ export default function Navbar() {
       image: "/images/pic.jpg",
       message: "Friend request from Jane.",
     },
+    {
+      name: "John Doe",
+      image: "/images/pic.jpg",
+      message: "Friend request from Jane.",
+    },
+    {
+      name: "John Doe",
+      image: "/images/pic.jpg",
+      message: "Friend request from Jane.",
+    },
+    {
+      name: "John Doe",
+      image: "/images/pic.jpg",
+      message: "Friend request from Jane.",
+    },
+    {
+      name: "John Doe",
+      image: "/images/pic.jpg",
+      message: "Friend request from Jane.",
+    },
+    {
+      name: "John Doe",
+      image: "/images/pic.jpg",
+      message: "Friend request from Jane.",
+    },
+    
     // Add more notifications as needed
   ];
-
+  const handleNotificationClick = () => {
+    setShowModal(!showModal);
+    setIsNotificationModalOpen(!isNotificationModalOpen);
+  };
   const logout = () => {  
     // Remove the authentication token from localStorage
     localStorage.removeItem("accessToken");
@@ -45,6 +75,8 @@ export default function Navbar() {
 
   useEffect(() => {
     // Fetch user data when the component mounts
+    const currentUser = localStorage.getItem("currentUser");
+    setFullName(JSON.parse(currentUser).firstname + " " + JSON.parse(currentUser).lastname);
     const fetchData = async () => {
       const userData = await fetchUsers();
       console.log(userData);
@@ -73,11 +105,6 @@ export default function Navbar() {
     };
   }, [showModal]);
 
-  /* Callback function to handle received invitations
-  const handleReceivedInvitation = (invitationData) => {
-    // Update the invitations state with the new invitation
-    setInvitations((prevInvitations) => [...prevInvitations, invitationData]);
-  };*/
 
   return (
     <div className={styles.container}>
@@ -98,10 +125,10 @@ export default function Navbar() {
         )}
       </div>
       <div className={styles.userProfile}>
-        <div className={styles.userName}>{userName}</div>
+        <div className={styles.userName}>{fullName}</div>
         <div
           className={styles.notification}
-          onClick={() => setShowModal(!showModal)}
+          onClick={() => handleNotificationClick()}
         >
           <Image
             src={notification}
@@ -115,6 +142,9 @@ export default function Navbar() {
               invitations={invitations}
               onClose={() => setShowModal(false)}
             />
+          )}
+            {invitations.length > 0 && !isNotificationModalOpen && (
+            <div className={styles.notificationCount}>{invitations.length}</div>
           )}
         </div>
         <div className={styles.profilePhoto}>
