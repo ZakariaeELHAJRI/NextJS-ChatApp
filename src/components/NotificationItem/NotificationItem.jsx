@@ -83,6 +83,8 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
     };
 
     fetchInvitations();
+
+    
   }, [invitations]);
 
   // Function to handle accepting an invitation
