@@ -15,10 +15,8 @@ export default function Conversation({ conversationData }) {
     setMessages(conversationData.messages);
     const token = localStorage.getItem('accessToken');
     if (token) {
-     
-        receiveWebSocketMessage(socket, (newMessage) => {
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
-        });
+     receiveWebSocketMessage(socket,setMessages);
+       
      
     }
   }, [conversationData]);
@@ -39,7 +37,8 @@ export default function Conversation({ conversationData }) {
     // Emit the 'send_message' event with the message data
     sendWebSocketMessage(socket, newMessage);
     console.log('WebSocket message sent:', newMessage);
-
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  //  receiveWebSocketMessage(socket,setMessages);
     // Clear the message input field
     setMessageInput('');
   };
