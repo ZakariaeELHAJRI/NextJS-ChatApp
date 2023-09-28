@@ -25,17 +25,19 @@ export const initializeSocket = (userId, token) => {
 };
 
 
-export const sendWebSocketMessage = (messageData) => {
+export const sendWebSocketMessage = (socket ,messageData) => {
   if (socket && socket.readyState === WebSocket.OPEN) {
     const message = {
       event: 'message',
-      data: messageData,
+      data: messageData, // You can define the structure of the messageData as needed
     };
-    socket.send(JSON.stringify(messageData));
-    console.log('WebSocket message sent:', messageData);
+
+    socket.send(JSON.stringify(message));
+    console.log('WebSocket message sent:', message);
   } else {
     console.error('WebSocket is not open');
   }
+ 
 };
 
 export const sendInvitation = (invitationData) => {
@@ -88,7 +90,7 @@ export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
       try {
         // Try to parse the received message as JSON
         const newMessage = JSON.parse(event.data);
-  
+        
         // Update the message state with the new message
         setMessageState((prevMessages) => [...prevMessages, newMessage]);
       } catch (error) {
