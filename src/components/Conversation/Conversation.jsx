@@ -16,8 +16,6 @@ export default function Conversation({ conversationData }) {
     const token = localStorage.getItem('accessToken');
     if (token) {
      receiveWebSocketMessage(socket,setMessages);
-       
-     
     }
   }, [conversationData]);
 
