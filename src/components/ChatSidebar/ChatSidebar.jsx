@@ -4,15 +4,15 @@ import styles from "./ChatSidebar.module.css";
 import ChatListItem from "@/components/ChatListItem/ChatListItem";
 import { fetchConversations } from './data';
 import ChatConversation from "../ChatConversation/ChatConversation";
-
+import { useWebSocket } from '@/context/WebSocketContext';
 export default function ChatSidebar({ onItemClick }) {
   const [conversations, setConversations] = useState([]);
   const [isConversationSelected, setIsConversationSelected] = useState(false);
-
+  const { acceptances } = useWebSocket();
   useEffect(() => {
     fetchData();
   
-  }, []);
+  }, [acceptances]);
 
   const fetchData = async () => {
     try {
