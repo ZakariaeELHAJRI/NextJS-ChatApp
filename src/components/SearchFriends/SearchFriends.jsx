@@ -62,7 +62,7 @@ export default function SearchFriends({ UsersList }) {
       friend_id: friendToAdd.id,
       user_name: `${current_user.firstname} ${current_user.lastname}`,
     };
-
+    console.log('Sending invitation:', data);
     sendInvitation(data);
 
     socket.onmessage = (event) => {
