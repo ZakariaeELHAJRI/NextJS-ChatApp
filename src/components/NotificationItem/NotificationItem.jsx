@@ -3,12 +3,19 @@ import React, { useEffect, useState } from "react";
 import styles from "./notificationItem.module.css";
 import Image from "next/image";
 import axios from "axios";
+import { sendAcceptance } from "@/app/Utils/websocket";
 
-const NotificationItem = ({ invitation , onAccept }) => {
+const NotificationItem = ({ invitation , onAccept , onSend }) => {
   const handleAccept = () => {
     console.log("Accept invitation:", invitation);
     onAccept(invitation.id);
   };
+
+  const handleSendMessage = () => {
+    console.log("Send message to:", invitation);
+    onSend(invitation.user_id , invitation.friend_id);
+  }
+
   return (
     <div className={styles["invitation"]}>
       <div className={styles["invitation-item"]}>
@@ -44,7 +51,8 @@ const NotificationItem = ({ invitation , onAccept }) => {
           </>
         )}
         {invitation.status === "accepted" && (
-          <button className={styles.sendMessageButton}>Send Message</button>
+          <button className={styles.sendMessageButton} onClick={handleSendMessage}>
+            Send Message</button>
         )}
       </div>
     </div>
@@ -74,9 +82,7 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
          // const combinedInvitations = [...databaseInvitations, ...invitations];
           setAllInvitations(databaseInvitations);
           console.log("All invitations:", databaseInvitations);
-        } else {
-          setAllInvitations(invitations);
-        }
+        } 
       } catch (error) {
         console.error("Error fetching invitations:", error);
       }
@@ -119,6 +125,37 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
       }
     } catch (error) {
       console.error("Error updating invitation status:", error);
+    }
+  };
+  const handleSendMsg = async (user_id , friend_id) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      // Make an HTTP POST request to your server's API endpoint to update the invitation status
+      const response = await axios.post(
+        `http://localhost:8000/api/conversations`,
+        {
+          user1_id: user_id,
+          user2_id: friend_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    
+      // Check the response to ensure the update was successful
+      if (response.status === 200) {
+       console.log("Conversation created successfully");
+       const data = {
+        user1_id: user_id,
+        user2_id: friend_id,
+      };
+      sendAcceptance(data);
+      console.log("Acceptance sent");
+      }
+    } catch (error) {
+      console.error("Error sending acceptation:", error);
     }
   };
 
@@ -166,7 +203,7 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
         ) : (
           <div>
             {allInvitations.map((invitation, index) => (
-              <NotificationItem key={index} invitation={invitation}  onAccept={handleAcceptInvitation} />
+              <NotificationItem key={index} invitation={invitation}  onAccept={handleAcceptInvitation} onSend={handleSendMsg} />
             ))}
           </div>
         )}
