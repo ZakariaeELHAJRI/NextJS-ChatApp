@@ -57,3 +57,20 @@
   height: 19px;
   object-fit: cover;
 }
+
+.notificationCount {
+  position: absolute;
+  top: 1.3%;
+  margin-left: 18px;
+  background-color: red; /* Red background for the count */
+  color: white;
+  border-radius: 50%; /* Make it a circle */
+  width: 20px;
+  height: 20px;
+  font-size: 12px; /* Adjust font size as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  
+}
