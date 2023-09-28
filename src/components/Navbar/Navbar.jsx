@@ -20,7 +20,7 @@ export default function Navbar() {
   const modalRef = useRef(null);
   const [users, setUsers] = useState([]);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
- 
+  const [isNotificationCountVisible, setIsNotificationCountVisible] = useState(false);
 
   const notifications = [
     {
@@ -42,28 +42,18 @@ export default function Navbar() {
       name: "John Doe",
       image: "/images/pic.jpg",
       message: "Friend request from Jane.",
-    },
-    {
-      name: "John Doe",
-      image: "/images/pic.jpg",
-      message: "Friend request from Jane.",
-    },
-    {
-      name: "John Doe",
-      image: "/images/pic.jpg",
-      message: "Friend request from Jane.",
-    },
-    {
-      name: "John Doe",
-      image: "/images/pic.jpg",
-      message: "Friend request from Jane.",
-    },
+    }
     
     // Add more notifications as needed
   ];
   const handleNotificationClick = () => {
     setShowModal(!showModal);
     setIsNotificationModalOpen(!isNotificationModalOpen);
+
+    // Hide the notification count when the notification modal is opened
+    if (isNotificationCountVisible) {
+      setIsNotificationCountVisible(false);
+    }
   };
   const logout = () => {  
     // Remove the authentication token from localStorage
@@ -85,6 +75,12 @@ export default function Navbar() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (invitations.length > 0) {
+      setIsNotificationCountVisible(true);
+    }
+  }, [invitations]);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -143,7 +139,7 @@ export default function Navbar() {
               onClose={() => setShowModal(false)}
             />
           )}
-            {invitations.length > 0 && !isNotificationModalOpen && (
+            {isNotificationCountVisible && (
             <div className={styles.notificationCount}>{invitations.length}</div>
           )}
         </div>
