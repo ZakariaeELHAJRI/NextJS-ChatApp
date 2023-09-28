@@ -4,7 +4,11 @@ import styles from "./notificationItem.module.css";
 import Image from "next/image";
 import axios from "axios";
 
-const NotificationItem = ({ invitation }) => {
+const NotificationItem = ({ invitation , onAccept }) => {
+  const handleAccept = () => {
+    console.log("Accept invitation:", invitation);
+    onAccept(invitation.id);
+  };
   return (
     <div className={styles["invitation"]}>
       <div className={styles["invitation-item"]}>
@@ -31,8 +35,17 @@ const NotificationItem = ({ invitation }) => {
         <p className={styles.daysAgo}>{invitation.daysAgo} days ago</p>
       </div>
       <div className={styles["invitation-buttons"]}>
-        <button className={styles.acceptButton}>Accept</button>
-        <button className={styles.refuseButton}>Refuse</button>
+      {invitation.status === "pending" && (
+          <>
+            <button className={styles.acceptButton} onClick={handleAccept}>
+              Accept
+            </button>
+            <button className={styles.refuseButton}>Refuse</button>
+          </>
+        )}
+        {invitation.status === "accepted" && (
+          <button className={styles.sendMessageButton}>Send Message</button>
+        )}
       </div>
     </div>
   );
@@ -58,9 +71,9 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
        const databaseInvitations = response.data;
     
         if (databaseInvitations.length > 0) {
-          const combinedInvitations = [...databaseInvitations, ...invitations];
-          setAllInvitations(combinedInvitations);
-          console.log("All invitations:", combinedInvitations);
+         // const combinedInvitations = [...databaseInvitations, ...invitations];
+          setAllInvitations(databaseInvitations);
+          console.log("All invitations:", databaseInvitations);
         } else {
           setAllInvitations(invitations);
         }
@@ -71,6 +84,41 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
 
     fetchInvitations();
   }, [invitations]);
+
+  // Function to handle accepting an invitation
+  const handleAcceptInvitation = async (invitationId) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      // Make an HTTP POST request to your server's API endpoint to update the invitation status
+      const response = await axios.put(
+        `http://localhost:8000/api/friendships/${invitationId}`,
+        {
+          status: "accepted", // Update the status to "accepted"
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Check the response to ensure the update was successful
+      if (response.status === 200) {
+        // Update the local state to reflect the accepted invitation
+        const updatedInvitations = allInvitations.map((invitation) => {
+          if (invitation.id === invitationId) {
+            return { ...invitation, status: "accepted" };
+          }
+          return invitation;
+        });
+        setAllInvitations(updatedInvitations);
+      } else {
+        console.error("Error updating invitation status:", response.data);
+      }
+    } catch (error) {
+      console.error("Error updating invitation status:", error);
+    }
+  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -116,7 +164,7 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
         ) : (
           <div>
             {allInvitations.map((invitation, index) => (
-              <NotificationItem key={index} invitation={invitation} />
+              <NotificationItem key={index} invitation={invitation}  onAccept={handleAcceptInvitation} />
             ))}
           </div>
         )}
