@@ -52,6 +52,34 @@ export const sendInvitation = (invitationData) => {
     }
   };
 
+export const sendAcceptance = (acceptanceData) => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const acceptanceInvitation = {
+        event: 'acceptance',
+        data: acceptanceData, // You can define the structure of the acceptanceData as needed
+      };
+  
+      socket.send(JSON.stringify(acceptanceInvitation));
+      console.log('WebSocket acceptance sent:', acceptanceInvitation);
+    } else {
+      console.error('WebSocket is not open');
+    }
+  }
+
+export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
+    socket.addEventListener('message', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket acceptance received:', data);
+        if(data.event==="acceptance"){
+          setAcceptanceState((prevAcceptances) => [...prevAcceptances, data]);
+        }
+      } catch (error) {
+        console.error('Received non-JSON message:', event.data);
+      }
+    });
+  }
+
  // Function to handle received messages
   export const receiveWebSocketMessage = (socket, setMessageState) => {
     socket.addEventListener('message', (event) => {
@@ -78,7 +106,10 @@ export const sendInvitation = (invitationData) => {
       try {
         const data = JSON.parse(event.data);
         console.log('WebSocket invitation received:', data);
-        setInvitationState((prevInvitations) => [...prevInvitations, data]);
+        if(data.event==="invitation"){
+               setInvitationState((prevInvitations) => [...prevInvitations, data]);
+        }
+   
       } catch (error) {
         console.error('Received non-JSON message:', event.data);
       }
