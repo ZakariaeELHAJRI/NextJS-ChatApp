@@ -90,9 +90,10 @@ export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
       try {
         // Try to parse the received message as JSON
         const newMessage = JSON.parse(event.data);
-        
-        // Update the message state with the new message
-        setMessageState((prevMessages) => [...prevMessages, newMessage]);
+        if (newMessage.event === "message") {
+          // Update the message state with the new message
+          setMessageState((prevMessages) => [...prevMessages, newMessage]);
+        }
       } catch (error) {
         // Handle non-JSON messages here
         console.error("Received non-JSON message:", event.data);
@@ -101,7 +102,33 @@ export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
   };
   
 
-
+  export const receiveWebSocketUpdateMessage = (socket, setConversations ) => {
+    socket.addEventListener('message', (event) => {
+      console.log("WebSocket message received:", event.data);
+      try {
+        const newMessage = JSON.parse(event.data);
+        if (newMessage.event === "message") {
+          // Update the conversation with the new message if setConversations is provided
+          if (setConversations) {
+            setConversations((prevConversations) => {
+              const updatedConversations = [...prevConversations];
+              const conversationToUpdate = updatedConversations.find(
+                (conversation) => conversation.id === newMessage.conversationId
+              );
+              if (conversationToUpdate) {
+                conversationToUpdate.message = newMessage.content;
+                conversationToUpdate.time = newMessage.time;
+              }
+              return updatedConversations;
+            });
+          }
+        }
+      } catch (error) {
+        // Handle non-JSON messages here
+        console.error("Received non-JSON message:", event.data);
+      }
+    });
+  };
 
   export const receiveWebSocketInvitations = (socket, setInvitationState) => {
     socket.addEventListener('message', (event) => {
