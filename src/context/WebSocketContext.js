@@ -1,7 +1,7 @@
 "use client"
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import { initializeSocket, receiveWebSocketInvitations, recieveWebSocketAcceptance } from '../app/Utils/websocket';
+import { initializeSocket, receiveWebSocketInvitations, receiveWebSocketMessage, recieveWebSocketAcceptance } from '../app/Utils/websocket';
 import { useRouter } from 'next/navigation';
 import axios from 'axios'; // Import axios for making API requests
 
@@ -13,7 +13,8 @@ export const WebSocketProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [invitations, setInvitations] = useState([]);
-  const [acceptances, setAcceptances] = useState([]); // Add this line
+  const [acceptances, setAcceptances] = useState([]); 
+  const [messages, setMessages] = useState([]);
   const router = useRouter();
 
   const fetchUserByUsername = async (username) => {
@@ -87,11 +88,12 @@ export const WebSocketProvider = ({ children }) => {
 
           receiveWebSocketInvitations(socket, setInvitations);
           recieveWebSocketAcceptance(socket, setAcceptances);
+          receiveWebSocketMessage (socket, setMessages);
     }
   }, [socket]);
 
   return (
-    <WebSocketContext.Provider value={{ socket, isTokenValid, isLoading, invitations, acceptances }}>
+    <WebSocketContext.Provider value={{ socket, isTokenValid, isLoading, invitations, acceptances  ,messages  }}>
       {children}
     </WebSocketContext.Provider>
   );
