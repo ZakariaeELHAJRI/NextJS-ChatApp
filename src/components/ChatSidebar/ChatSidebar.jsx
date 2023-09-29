@@ -67,9 +67,6 @@ export default function ChatSidebar({ onItemClick }) {
 
     // Mark all messages in the conversation as read
      await markMessagesAsRead(conversationId);
- 
-
-
     // Reset the message count to zero for the clicked conversation
     setMessageCounts((prevCounts) => ({
       ...prevCounts,
@@ -78,9 +75,6 @@ export default function ChatSidebar({ onItemClick }) {
 
     setIsConversationSelected(true);
   };
-
-
-
   return (
     <div className={styles.container}>
       <div className={styles["chat-conversation"]}>
