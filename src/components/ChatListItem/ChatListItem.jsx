@@ -26,6 +26,5 @@ const ChatListItem = ({ name, message, time, profilePhoto, onClick, messageCount
     </div>
   );
 };
-
 export default ChatListItem;
 
