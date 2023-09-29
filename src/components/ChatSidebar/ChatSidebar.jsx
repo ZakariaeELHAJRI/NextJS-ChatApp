@@ -36,7 +36,6 @@ export default function ChatSidebar({ onItemClick }) {
   const formatTime = (time) => {
     const currentTime = new Date();
     const messageTime = new Date(time);
-
     // Check if the message time is today
     if (
       messageTime.getDate() === currentTime.getDate() &&
@@ -96,4 +95,3 @@ export default function ChatSidebar({ onItemClick }) {
     </div>
   );
 }
-
