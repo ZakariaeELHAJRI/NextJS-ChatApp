@@ -30,12 +30,13 @@ export default function Conversation({ conversationData }) {
       receiver_id: conversationData.friend_id,
       time: new Date().toLocaleTimeString(),
       conversation_id: conversationData.id,
+      is_read: false,
     };
 
     // Emit the 'send_message' event with the message data
     sendWebSocketMessage(socket, newMessage);
     console.log('WebSocket message sent:', newMessage);
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+   // setMessages((prevMessages) => [...prevMessages, newMessage]);
   //  receiveWebSocketMessage(socket,setMessages);
     // Clear the message input field
     setMessageInput('');
