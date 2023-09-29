@@ -19,14 +19,12 @@ export default function ChatSidebar({ onItemClick }) {
   const fetchData = async () => {
     try {
       const data = await fetchConversations();
-
       // Update message counts based on unread messages
       const updatedMessageCounts = {};
       data.forEach((conversation) => {
         const unreadMessages = conversation.messages.filter((message) => !message.is_read);
         updatedMessageCounts[conversation.id] = unreadMessages.length;
       });
-
       setMessageCounts(updatedMessageCounts);
       setConversations(data);
 
