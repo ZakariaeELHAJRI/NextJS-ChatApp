@@ -70,10 +70,11 @@ export const sendAcceptance = (acceptanceData) => {
 
 export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
     socket.addEventListener('message', (event) => {
+      console.log("u have a socket acceptance" , event.data);
       try {
         const data = JSON.parse(event.data);
-        console.log('WebSocket acceptance received:', data);
         if(data.event==="acceptance"){
+          console.log('WebSocket acceptance received:', data);
           setAcceptanceState((prevAcceptances) => [...prevAcceptances, data]);
         }
       } catch (error) {
@@ -85,12 +86,12 @@ export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
  // Function to handle received messages
   export const receiveWebSocketMessage = (socket, setMessageState) => {
     socket.addEventListener('message', (event) => {
-      console.log("WebSocket message received:", event.data);
-  
+      
       try {
         // Try to parse the received message as JSON
         const newMessage = JSON.parse(event.data);
         if (newMessage.event === "message") {
+          console.log("WebSocket message received:", event.data);
           // Update the message state with the new message
           setMessageState((prevMessages) => [...prevMessages, newMessage]);
         }
@@ -134,8 +135,8 @@ export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
     socket.addEventListener('message', (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log('WebSocket invitation received:', data);
         if(data.event==="invitation"){
+          console.log('WebSocket invitation received:', data);
                setInvitationState((prevInvitations) => [...prevInvitations, data]);
         }
    
