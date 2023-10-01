@@ -90,7 +90,6 @@ export default function Navbar() {
       console.error("Error is read invitations:", error);
     }
   };
-
   const fetchAndSetInvitations = async () => {
     try {
       const response = await axios.get(
