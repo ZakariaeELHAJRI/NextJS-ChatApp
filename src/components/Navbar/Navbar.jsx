@@ -129,7 +129,6 @@ export default function Navbar() {
     setFullName(
       `${JSON.parse(currentUser).firstname} ${JSON.parse(currentUser).lastname}`
     );
-
     const fetchData = async () => {
       const userData = await fetchUsers();
       setUsers(userData);
