@@ -14,7 +14,7 @@ export default function Navbar() {
   const userProfilePhoto = "/images/pic.jpg";
   const notification = "/images/icons/notifications.png";
   const logoutIcon = "/images/icons/logout.png";
- const {invitations}= useWebSocket();
+ const {invitations, acceptances}= useWebSocket();
   const [showModal, setShowModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false); // State for the search modal
   const modalRef = useRef(null);
@@ -77,10 +77,12 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (invitations.length > 0) {
+    if (invitations.length > 0 || acceptances.length > 0) {
       setIsNotificationCountVisible(true);
+      console.log("acceptances",acceptances);
+      console.log('length',acceptances.length)
     }
-  }, [invitations]);
+  }, [invitations,acceptances]);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -140,7 +142,7 @@ export default function Navbar() {
             />
           )}
             {isNotificationCountVisible && (
-            <div className={styles.notificationCount}>{invitations.length}</div>
+            <div className={styles.notificationCount}>{invitations.length + acceptances.length}</div>
           )}
         </div>
         <div className={styles.profilePhoto}>
