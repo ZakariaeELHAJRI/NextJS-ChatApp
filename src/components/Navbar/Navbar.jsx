@@ -64,7 +64,6 @@ export default function Navbar() {
       await readNotification();
     }
   };
-
   const logout = () => {
     // Remove the authentication token from localStorage
     localStorage.removeItem("accessToken");
