@@ -61,8 +61,8 @@ export default function Navbar() {
     if (isNotificationCountVisible) {
       setIsNotificationCountVisible(false);
       setInvitationCounts(0);
+      await readNotification();
     }
-    await readNotification();
   };
 
   const logout = () => {
