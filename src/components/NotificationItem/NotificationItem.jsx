@@ -6,6 +6,7 @@ import axios from "axios";
 import { sendAcceptance } from "@/app/Utils/websocket";
 
 const NotificationItem = ({ invitation , onAccept , onSend }) => {
+  console.log("invitation passed ",invitation)
   const handleAccept = () => {
     console.log("Accept invitation:", invitation);
     onAccept(invitation.id);
@@ -61,38 +62,12 @@ const NotificationItem = ({ invitation , onAccept , onSend }) => {
 
 const NotificationModal = ({ notifications, invitations, onClose }) => {
   const [activeTab, setActiveTab] = useState("notifications");
+
   const [allInvitations, setAllInvitations] = useState([]);
-  
-  useEffect(() => {
-    const { id: currentUserId } = JSON.parse(localStorage.getItem('currentUser'));
-    
-    const fetchInvitations = async () => {
-      try {
-        const token = localStorage.getItem('accessToken');
-        const response = await axios.get(`http://localhost:8000/api/friendships/${currentUserId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log("Invitations from database:", response.data);
-    
-       const databaseInvitations = response.data;
-    
-        if (databaseInvitations.length > 0) {
-         // const combinedInvitations = [...databaseInvitations, ...invitations];
-          setAllInvitations(databaseInvitations);
-          console.log("All invitations:", databaseInvitations);
-        } 
-      } catch (error) {
-        console.error("Error fetching invitations:", error);
-      }
-    };
 
-    fetchInvitations();
-
-    
-  }, [invitations]);
-
+useEffect(() => {
+  setAllInvitations(invitations);
+}, [invitations]);
   // Function to handle accepting an invitation
   const handleAcceptInvitation = async (invitationId) => {
     try {
@@ -116,12 +91,13 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
         console.log("data acceptance "+response.data)
         sendAcceptance(response.data)
         // Update the local state to reflect the accepted invitation
-        const updatedInvitations = allInvitations.map((invitation) => {
+        const updatedInvitations = invitations.map((invitation) => {
           if (invitation.id === invitationId) {
             return { ...invitation, status: "accepted" };
           }
           return invitation;
         });
+        console.log("updatedInvitations "+JSON.stringify(updatedInvitations)  )
         setAllInvitations(updatedInvitations);
       } else {
         console.error("Error updating invitation status:", response.data);
