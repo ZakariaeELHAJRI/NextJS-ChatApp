@@ -112,6 +112,9 @@ const NotificationModal = ({ notifications, invitations, onClose }) => {
 
       // Check the response to ensure the update was successful
       if (response.status === 200) {
+        console.log("Invitation accepted successfully");
+        console.log("data acceptance "+response.data)
+        sendAcceptance(response.data)
         // Update the local state to reflect the accepted invitation
         const updatedInvitations = allInvitations.map((invitation) => {
           if (invitation.id === invitationId) {
