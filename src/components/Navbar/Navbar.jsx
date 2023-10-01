@@ -4,24 +4,31 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./Navbar.module.css";
 import NotificationModal from "../NotificationItem/NotificationItem";
-import SearchFriends from "../SearchFriends/SearchFriends"; 
-import {fetchUsers} from "../SearchFriends/data";
+import SearchFriends from "../SearchFriends/SearchFriends";
+import { fetchUsers } from "../SearchFriends/data";
 import { useWebSocket } from "@/context/WebSocketContext";
-
+import axios from "axios";
 
 export default function Navbar() {
   const [fullName, setFullName] = useState("");
   const userProfilePhoto = "/images/pic.jpg";
   const notification = "/images/icons/notifications.png";
   const logoutIcon = "/images/icons/logout.png";
- const {invitations, acceptances}= useWebSocket();
+  const { invitations, acceptances } = useWebSocket();
   const [showModal, setShowModal] = useState(false);
-  const [showSearchModal, setShowSearchModal] = useState(false); // State for the search modal
+  const [showSearchModal, setShowSearchModal] = useState(false);
   const modalRef = useRef(null);
   const [users, setUsers] = useState([]);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
-  const [isNotificationCountVisible, setIsNotificationCountVisible] = useState(false);
-
+  const [isNotificationCountVisible, setIsNotificationCountVisible] = useState(
+    false
+  );
+  const [allInvitations, setAllInvitations] = useState([]);
+  const [invitationCounts, setInvitationCounts] = useState(0); // Initialize as 0
+  const { id: currentUserId } = JSON.parse(
+    localStorage.getItem("currentUser")
+  );
+  const token = localStorage.getItem("accessToken");
   const notifications = [
     {
       name: "John Doe",
@@ -42,53 +49,113 @@ export default function Navbar() {
       name: "John Doe",
       image: "/images/pic.jpg",
       message: "Friend request from Jane.",
-    }
-    
+    },
     // Add more notifications as needed
   ];
-  const handleNotificationClick = () => {
+
+  const handleNotificationClick = async () => {
     setShowModal(!showModal);
     setIsNotificationModalOpen(!isNotificationModalOpen);
 
     // Hide the notification count when the notification modal is opened
     if (isNotificationCountVisible) {
       setIsNotificationCountVisible(false);
+      setInvitationCounts(0);
     }
+    await readNotification();
   };
-  const logout = () => {  
+
+  const logout = () => {
     // Remove the authentication token from localStorage
     localStorage.removeItem("accessToken");
 
     // Redirect the user to the login page
     window.location.href = "/login";
-  }
+  };
+
+  const readNotification = async () => {
+    // updated is_read to true using axios token and current user id
+    try {
+      
+      const response = await axios.put(
+        `http://localhost:8000/api/mark-invitation-as-read/${currentUserId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Invitations is read :", response.data);
+    } catch (error) {
+      console.error("Error is read invitations:", error);
+    }
+  };
+
+  const fetchAndSetInvitations = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/friendships/${currentUserId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Invitations from database:", response.data);
+
+      const databaseInvitations = response.data;
+
+      if (databaseInvitations.length > 0) {
+        setAllInvitations(databaseInvitations);
+        console.log("All invitations:", databaseInvitations);
+
+        // Calculate and set the invitation counts
+        const unreadInvitationsCount = databaseInvitations.filter(
+          (invitation) => !invitation.is_read
+        ).length;
+        setInvitationCounts(unreadInvitationsCount);
+       if (unreadInvitationsCount > 0) {
+          setIsNotificationCountVisible(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching invitations:", error);
+    }
+  };
 
   useEffect(() => {
     // Fetch user data when the component mounts
     const currentUser = localStorage.getItem("currentUser");
-    setFullName(JSON.parse(currentUser).firstname + " " + JSON.parse(currentUser).lastname);
+    setFullName(
+      `${JSON.parse(currentUser).firstname} ${JSON.parse(currentUser).lastname}`
+    );
+
     const fetchData = async () => {
       const userData = await fetchUsers();
-      console.log(userData);
       setUsers(userData);
     };
-
     fetchData();
+    fetchAndSetInvitations();
+    if (invitationCounts > 0) {
+      setIsNotificationCountVisible(true);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchAndSetInvitations(); // Call the async function inside useEffect
+  }, [invitations]);
 
   useEffect(() => {
     if (invitations.length > 0 || acceptances.length > 0) {
       setIsNotificationCountVisible(true);
-      console.log("acceptances",acceptances);
-      console.log('length',acceptances.length)
     }
-  }, [invitations,acceptances]);
+  }, [invitations, acceptances]);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
         setShowModal(false);
-        setShowSearchModal(false); // Close the search modal as well
+        setShowSearchModal(false);
       }
     };
 
@@ -103,7 +170,6 @@ export default function Navbar() {
     };
   }, [showModal]);
 
-
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.logo}>
@@ -113,12 +179,11 @@ export default function Navbar() {
         <input
           type="text"
           placeholder="Search"
-          onClick={() => setShowSearchModal(true)} // Show the search modal on click
+          onClick={() => setShowSearchModal(true)}
         />
         {showSearchModal && (
           <div className={styles.searchModal} ref={modalRef}>
-            {/* Pass the callback function to SearchFriends component */}
-            <SearchFriends UsersList={users}  /> 
+            <SearchFriends UsersList={users} />
           </div>
         )}
       </div>
@@ -137,12 +202,12 @@ export default function Navbar() {
           {showModal && (
             <NotificationModal
               notifications={notifications}
-              invitations={invitations}
+              invitations={allInvitations}
               onClose={() => setShowModal(false)}
             />
           )}
-            {isNotificationCountVisible && (
-            <div className={styles.notificationCount}>{invitations.length + acceptances.length}</div>
+          {isNotificationCountVisible && (
+            <div className={styles.notificationCount}>{invitationCounts + acceptances.length}</div>
           )}
         </div>
         <div className={styles.profilePhoto}>
