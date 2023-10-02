@@ -4,6 +4,7 @@ import styles from "./notificationItem.module.css";
 import Image from "next/image";
 import axios from "axios";
 import { sendAcceptance } from "@/app/Utils/websocket";
+import { handleSendMsg } from "./data";
 
 const NotificationItem = ({ invitation , onAccept , onSend }) => {
   console.log("invitation passed ",invitation)
@@ -106,37 +107,6 @@ useEffect(() => {
       console.error("Error updating invitation status:", error);
     }
   };
-  const handleSendMsg = async (user_id , friend_id) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      // Make an HTTP POST request to your server's API endpoint to update the invitation status
-      const response = await axios.post(
-        `http://localhost:8000/api/conversations`,
-        {
-          user1_id: user_id,
-          user2_id: friend_id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    
-      // Check the response to ensure the update was successful
-      if (response.status === 200) {
-       console.log("Conversation created successfully");
-       const data = {
-        user1_id: user_id,
-        user2_id: friend_id,
-      };
-      sendAcceptance(data);
-      console.log("Acceptance sent");
-      }
-    } catch (error) {
-      console.error("Error sending acceptation:", error);
-    }
-  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -167,14 +137,14 @@ useEffect(() => {
             {notifications.map((notification, index) => (
               <div key={index} className={styles["notification-item"]}>
                 <Image
-                  src={notification.image}
+                  src='/images/pic.jpg'
                   alt="User"
                   width={40}
                   height={40}
                   className={styles.userImage}
                 />
                 <p>
-                  <strong>{notification.name}</strong> {notification.message}
+                  <strong>{notification.first_name_sender} {notification.last_name_sender}</strong> {notification.message}
                 </p>
               </div>
             ))}
