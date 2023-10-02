@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react';
 import styles from './SearchFriends.module.css';
 import Image from 'next/image';
 import {
-  initializeSocket,
   sendInvitation,
-  receiveWebSocketInvitation,
 } from '@/app/Utils/websocket';
 import { useWebSocket } from '@/context/WebSocketContext';
-
+import {handleSendMsg} from '../NotificationItem/data'
 export default function SearchFriends({ UsersList }) {
   const [friends, setFriends] = useState([]);
   const { socket } = useWebSocket();
@@ -85,7 +83,7 @@ export default function SearchFriends({ UsersList }) {
   };
 
   const handleSendMessage = (index) => {
-    // Implement the logic to handle sending a message to the selected friend
+    handleSendMsg(friends[index].id,current_user.id );
   };
 
   return (
