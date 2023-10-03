@@ -13,15 +13,10 @@ export default function Conversation({ conversationData ,messagesData}) {
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-   // console.log("conversationId, opened ", conversationData.id);
-    
     if (token) {
-      // Set messages from the state in the local state
      setMessages(messagesData);
      
     }
- 
-       
   }, [conversationData]);
 
   useEffect(() => {
