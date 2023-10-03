@@ -6,6 +6,7 @@ import Conversation from '@/components/Conversation/Conversation';
 import StartChat from '@/components/StartChat/StartChat';
 export default function ChatConversation({ conversationId }) { 
   const [conversationData, setConversationData] = useState(null);
+  const [messagesData, setMessages] = useState([]);
   const [isEmpty, setIsEmpty] = useState(true);
   useEffect(() => {
     if (conversationId) {
@@ -23,6 +24,7 @@ export default function ChatConversation({ conversationId }) {
       if (response.status === 200) {
         const conversation = response.data;
         setConversationData(conversation);
+        setMessages(conversation.messages);
         console.log(conversation);
         setIsEmpty(false);
       } else {
@@ -37,7 +39,9 @@ export default function ChatConversation({ conversationId }) {
       {isEmpty ? (
         <StartChat />
       ) : (
-        <Conversation conversationData={conversationData}  /> 
+        <Conversation conversationData={conversationData}
+        messagesData={messagesData}
+           /> 
       )}
     </div>
   );
