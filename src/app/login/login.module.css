@@ -65,9 +65,8 @@
     margin-top: 10px; /* Adjust as needed */
     text-align: center;
   }
-  
-  .registerLink Link {
-    color: #110891;
+  .registerLinkText{
+    color: #9696ee;
     text-decoration: underline;
     /* You can add additional styles for the link if needed */
   }
