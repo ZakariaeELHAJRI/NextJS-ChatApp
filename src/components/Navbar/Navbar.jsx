@@ -184,7 +184,6 @@ export default function Navbar() {
     const handleDocumentClick = (e) => {
       handleOutsideClick(e);
     };
-  
     if (showModal || showSearchModal) {
       document.addEventListener("mousedown", handleDocumentClick);
     } else {
