@@ -68,9 +68,38 @@ export const sendAcceptance = (acceptanceData) => {
     }
   }
 
+  export const newConversation = (conversationData) => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const newConversationMessage = {
+        event: 'newConversation',
+        data: conversationData, // You can define the structure of the conversationData as needed
+      };
+
+      socket.send(JSON.stringify(newConversationMessage));
+      console.log('WebSocket newConversation sent:', newConversationMessage);
+    } else {
+      console.error('WebSocket is not open');
+    }
+  };
+
+  export const recieveWebSocketNewConversation = (socket, setConversations) => {
+    socket.addEventListener('message', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if(data.event==="newConversation"){
+          console.log('WebSocket newConversation received:', data);
+          setConversations((prevConversations) => [...prevConversations, data]);
+        }
+      } catch (error) {
+        console.error('Received non-JSON message:', event.data);
+      }
+    });
+  };
+
+  
+
 export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
     socket.addEventListener('message', (event) => {
-      console.log("u have a socket acceptance" , event.data);
       try {
         const data = JSON.parse(event.data);
         if(data.event==="acceptance"){
@@ -84,7 +113,7 @@ export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
   }
 
  // Function to handle received messages
-  export const receiveWebSocketMessage = (socket, setMessageState) => {
+  export const receiveWebSocketMessage = (socket, setMessageState ) => {
     socket.addEventListener('message', (event) => {
       
       try {
@@ -102,7 +131,25 @@ export const recieveWebSocketAcceptance = (socket, setAcceptanceState) => {
     });
   };
   
-
+  export const receiveWebSocketMessageConversation = (socket, setMessageState , conversationId ) => {
+    socket.addEventListener('message', (event) => {
+      
+      try {
+        // Try to parse the received message as JSON
+        const newMessage = JSON.parse(event.data);
+        console.log("newMessage receiveWebSocketMessageConversation : ",newMessage);
+        console.log("conversationId receiveWebSocketMessageConversation : ",conversationId);
+        if (newMessage.event === "message" && newMessage.conversation_id === conversationId) {
+          console.log("WebSocket message received:", event.data);
+          // Update the message state with the new message
+          setMessageState((prevMessages) => [...prevMessages, newMessage]);
+        }
+      } catch (error) {
+        // Handle non-JSON messages here
+        console.error("Received non-JSON message:", event.data);
+      }
+    });
+  };
   export const receiveWebSocketUpdateMessage = (socket, setConversations ) => {
     socket.addEventListener('message', (event) => {
       console.log("WebSocket message received:", event.data);
