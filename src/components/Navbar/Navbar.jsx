@@ -25,33 +25,12 @@ export default function Navbar() {
   );
   const [allInvitations, setAllInvitations] = useState([]);
   const [invitationCounts, setInvitationCounts] = useState(0); // Initialize as 0
+  const [acceptNotificationCounts, setAcceptNotificationCounts] = useState(0);
   const { id: currentUserId } = JSON.parse(
     localStorage.getItem("currentUser")
   );
   const token = localStorage.getItem("accessToken");
-  const notifications = [
-    {
-      name: "John Doe",
-      image: "/images/pic.jpg",
-      message: "New message received.",
-    },
-    {
-      name: "John Doe",
-      image: "/images/pic.jpg",
-      message: "Friend request from Jane.",
-    },
-    {
-      name: "John Doe",
-      image: "/images/pic.jpg",
-      message: "Friend request from Jane.",
-    },
-    {
-      name: "John Doe",
-      image: "/images/pic.jpg",
-      message: "Friend request from Jane.",
-    },
-    // Add more notifications as needed
-  ];
+  const [acceptNotification , setAcceptNotification] = useState([])
 
   const handleNotificationClick = async () => {
     setShowModal(!showModal);
@@ -61,6 +40,7 @@ export default function Navbar() {
     if (isNotificationCountVisible) {
       setIsNotificationCountVisible(false);
       setInvitationCounts(0);
+      setAcceptNotificationCounts(0);
       await readNotification();
     }
   };
@@ -75,7 +55,8 @@ export default function Navbar() {
   const readNotification = async () => {
     // updated is_read to true using axios token and current user id
     try {
-      
+      if (invitationCounts > 0) {
+
       const response = await axios.put(
         `http://localhost:8000/api/mark-invitation-as-read/${currentUserId}`,
         {
@@ -85,6 +66,18 @@ export default function Navbar() {
         }
       );
       console.log("Invitations is read :", response.data);
+      }
+      if (acceptNotificationCounts > 0) {
+        const response = await axios.put(
+          `http://localhost:8000/api/mark-notification-as-read/${currentUserId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("Notifications is read :", response.data);
+      }
     } catch (error) {
       console.error("Error is read invitations:", error);
     }
@@ -133,7 +126,7 @@ export default function Navbar() {
     };
     fetchData();
     fetchAndSetInvitations();
-    if (invitationCounts > 0) {
+    if (invitationCounts > 0 || acceptNotificationCounts.length > 0) {
       setIsNotificationCountVisible(true);
     }
   }, []);
@@ -143,29 +136,66 @@ export default function Navbar() {
   }, [invitations]);
 
   useEffect(() => {
-    if (invitations.length > 0 || acceptances.length > 0) {
+    if (invitations.length > 0 || acceptNotificationCounts.length > 0) {
       setIsNotificationCountVisible(true);
     }
+    fetchNotifications();
   }, [invitations, acceptances]);
 
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/notifications-by-user/${currentUserId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+       if (response.status === 200) {
+        const databaseNotifications = response.data ;
+        setAcceptNotification(response.data);
+        const unreadNotificationsCount = databaseNotifications.filter(
+          (notification) => !notification.is_read
+        ).length;
+        setAcceptNotificationCounts(unreadNotificationsCount);
+        if (unreadNotificationsCount > 0) {
+          setIsNotificationCountVisible(true);
+        }
+      }
+      console.log("Notifications from database:", response.data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  }
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(e.target) &&
+        !e.target.classList.contains("notification") // Check if the click is not on the notification icon
+      ) {
         setShowModal(false);
         setShowSearchModal(false);
+        setIsNotificationModalOpen(false); // Close the notification modal
       }
     };
-
-    if (showModal) {
-      document.addEventListener("mousedown", handleOutsideClick);
-    } else {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+  
+    const handleDocumentClick = (e) => {
+      handleOutsideClick(e);
     };
-  }, [showModal]);
+  
+    if (showModal || showSearchModal) {
+      document.addEventListener("mousedown", handleDocumentClick);
+    } else {
+      document.removeEventListener("mousedown", handleDocumentClick);
+    }
+  
+    return () => {
+      document.removeEventListener("mousedown", handleDocumentClick);
+    };
+  }, [showModal, showSearchModal]);
+  
 
   return (
     <div className={styles.container}>
@@ -196,15 +226,17 @@ export default function Navbar() {
             height={40}
             alt="Notification Icon"
           />
-          {showModal && (
-            <NotificationModal
-              notifications={notifications}
-              invitations={allInvitations}
-              onClose={() => setShowModal(false)}
-            />
+                {showModal && (
+            <div className="notificationModalContainer" ref={modalRef}>
+              <NotificationModal
+                notifications={acceptNotification}
+                invitations={allInvitations}
+                onClose={() => setShowModal(false)}
+              />
+            </div>
           )}
           {isNotificationCountVisible && (
-            <div className={styles.notificationCount}>{invitationCounts + acceptances.length}</div>
+            <div className={styles.notificationCount}>{invitationCounts + acceptNotificationCounts}</div>
           )}
         </div>
         <div className={styles.profilePhoto}>
