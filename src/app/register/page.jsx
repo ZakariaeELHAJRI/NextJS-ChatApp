@@ -53,7 +53,10 @@ export default function Register() {
 
     // Validate form data
     if (!isFormDataValid(formData)) {
-      setShowErrorMessage(true);
+      setTimeout(() => {
+              setShowErrorMessage(true);
+      }, 1000);
+
       return;
     }
 
@@ -64,7 +67,7 @@ export default function Register() {
         setShowSuccessMessage(true);
         setTimeout(() => {
           window.location.href = '/login';
-        }, 2000);
+        }, 1000);
       } else {
         setShowErrorMessage(true);
       }
@@ -104,7 +107,7 @@ export default function Register() {
           )}
           {showErrorMessage && (
             <div className={styles.errorMessage}>
-              Registration failed. Please fill in all required fields.
+              Registration failed. Please check the fields and try again.
             </div>
           )}
           <form onSubmit={handleSubmit}>
