@@ -2,10 +2,9 @@ import React from 'react';
 import Image from "next/image";
 import styles from "./chatListItem.module.css";
 
-const ChatListItem = ({ name, message, time, profilePhoto, onClick, messageCount,friend_id  }) => {
+const ChatListItem = ({ name, message, time, profilePhoto, onClick, messageCount,friend_id   }) => {
   const currentUserString = localStorage.getItem('currentUser');
   const currentUser = JSON.parse(currentUserString);
-  console.log("friend_id",friend_id + "current_user",currentUser.id)
   return (
     <div className={styles.container} onClick={onClick}>
       <div className={styles["chat-list-item"]}>
