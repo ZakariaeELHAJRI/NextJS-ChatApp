@@ -75,8 +75,6 @@ export default function Conversation({ conversationData ,messagesData}) {
       hour12: true, // Use a 12-hour clock
     };
     if (timestampRegex.test(time)) {
-  
-      // Compare the timestamp date with today's date
       if (timestampDate.toDateString() === today.toDateString()) {
         // If the timestamp date is the same as today, display only the hour and minute
         return timestampDate.toLocaleTimeString(undefined, options);
