@@ -15,7 +15,22 @@
     text-align: center;
     color: white;
   }
-  
+  .successMessage {
+    background-color: #4caf50; /* Green background color */
+    color: white; /* White text color */
+    padding: 10px 15px; /* Padding for the content */
+    border-radius: 4px; /* Rounded corners */
+    margin-bottom: 20px; /* Spacing below the message */
+    text-align: center; /* Center-align the text */
+  }
+  .errorMessage {
+    background-color: #f44336; /* Red background color */
+    color: white; /* White text color */
+    padding: 10px 15px; /* Padding for the content */
+    border-radius: 4px; /* Rounded corners */
+    margin-bottom: 20px; /* Spacing below the message */
+    text-align: center; /* Center-align the text */
+  }
   .register__title {
     font-size: 24px;
     margin-bottom: 20px;
@@ -29,7 +44,8 @@
   
   .register__form__input input {
     width: 100%;
-    padding: 10px;
+    padding: 15px;
+    margin-bottom:  10px;
     border: none;
     background-color: #212121;
     color: white;
@@ -43,7 +59,8 @@
   /* Styles for the country dropdown */
   .register__form__input select {
     width: 100%;
-    padding: 10px;
+    padding: 15px;
+    margin-bottom:  10px;
     border: none;
     background-color: #212121;
     color: rgba(255, 255, 255, 0.4);
