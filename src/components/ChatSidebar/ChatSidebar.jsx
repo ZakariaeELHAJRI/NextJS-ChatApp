@@ -8,13 +8,13 @@ import { useWebSocket } from '@/context/WebSocketContext';
 
 export default function ChatSidebar({ onItemClick }) {
   const [conversations, setConversations] = useState([]);
-  const { acceptances, messages } = useWebSocket();
+  const { newConnversation, messages } = useWebSocket();
   const [messageCounts, setMessageCounts] = useState({});
   const [isConversationSelected, setIsConversationSelected] = useState(false);
 
   useEffect(() => {
     fetchData();
-  }, [acceptances, messages]);
+  }, [newConnversation, messages]);
 
   const fetchData = async () => {
     try {
@@ -50,26 +50,40 @@ export default function ChatSidebar({ onItemClick }) {
     }
   };
   const markMessagesAsRead = async (conversationId) => {
+    const token = localStorage.getItem('accessToken');
     try {
-      await axios.put(`http://localhost:8000/api/mark-messages-as-read/${conversationId}`);
+      await axios.put(`http://localhost:8000/api/mark-messages-as-read/${conversationId}`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log('Messages marked as read');
     } catch (error) {
       console.error('Error marking messages as read:', error);
-      // Handle errors, if needed
     }
   };
+  
   const handleChatItemClick = async (conversationId) => {
     // Call the callback function with the clicked conversationId
     onItemClick(conversationId);
 
+
+    
     // Mark all messages in the conversation as read
      await markMessagesAsRead(conversationId);
-    // Reset the message count to zero for the clicked conversation
-    setMessageCounts((prevCounts) => ({
-      ...prevCounts,
-      [conversationId]: 0,
-    }));
 
+     // Reset the message count to zero for the clicked conversation
+     setMessageCounts((prevCounts) => ({
+       ...prevCounts,
+       [conversationId]: 0,
+      }));
+      
+      messages.forEach((message) => {
+       if (message.conversation_id === conversationId) {
+         message.conversation_id = null;
+ 
+       }
+     });
     setIsConversationSelected(true);
   };
   return (
