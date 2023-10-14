@@ -4,6 +4,7 @@ import Link from 'next/link';
 import styles from './login.module.css';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+import Image from 'next/image';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -34,7 +35,7 @@ export default function Login() {
     <div className={styles.container}>
       <div className={styles.login}>
         <div className={styles.login__logo}>
-          <img src="/images/chat_logo.png" alt="logo" />
+          <Image src="/images/chat_logo.png" alt="logo" width={70}  height={70} />
         </div>
         <div className={styles.login__title}>Login</div>
         <div className={styles.login__form}>
@@ -60,7 +61,7 @@ export default function Login() {
             </div>
           </form>
           <p className={styles.registerLink}>
-            Don't have an account?
+            Don &apos;t have an account?
             <Link className={styles.registerLinkText} href="/register"> Register here</Link>
           </p>
         </div>
