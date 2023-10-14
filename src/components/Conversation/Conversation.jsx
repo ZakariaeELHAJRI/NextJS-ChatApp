@@ -90,8 +90,6 @@ export default function Conversation({ conversationData ,messagesData}) {
     }
   };
   
-  
-  
   if (!conversationData) {
     return <StartChat />;
   }
