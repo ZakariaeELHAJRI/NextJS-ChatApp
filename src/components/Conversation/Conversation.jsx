@@ -60,33 +60,36 @@ export default function Conversation({ conversationData ,messagesData}) {
     setMessageInput('');
   };
   const customFormatTimestamp = (time) => {
-    const timestampRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+    // Try to parse the timestamp
     const timestampDate = new Date(time);
-    const today = new Date();
   
+    // Check if the parsed date is valid
+    if (!isNaN(timestampDate.getTime())) {
+      return formatTimestamp(timestampDate);
+    } else {
+      // If the timestamp is not valid, return an error
+      return 'Invalid Timestamp';
+    }
+  };
+  
+  const formatTimestamp = (timestamp) => {
+    const today = new Date();
     const options = {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true, // Use a 12-hour clock
     };
-    if (timestampRegex.test(time)) {
-      if (timestampDate.toDateString() === today.toDateString()) {
-        // If the timestamp date is the same as today, display only the hour and minute
-        return timestampDate.toLocaleTimeString(undefined, options);
-      } else {
-        // If the timestamp date is different from today, display custom format
-        const day = timestampDate.getDate().toString().padStart(2, '0');
-        const month = (timestampDate.getMonth() + 1).toString().padStart(2, '0');
-        const year = timestampDate.getFullYear().toString().substring(2);
-  
-        const formattedTime = timestampDate.toLocaleTimeString(undefined, options);
-  
-        return `${day}-${month}-${year} | ${formattedTime}`;
-      }
+    if (timestamp.toDateString() === today.toDateString()) {
+      return timestamp.toLocaleTimeString(undefined, options);
     } else {
-      return timestampDate.toLocaleTimeString(undefined, options);
+      const day = timestamp.getDate().toString().padStart(2, '0');
+      const month = (timestamp.getMonth() + 1).toString().padStart(2, '0');
+      const year = timestamp.getFullYear().toString().substring(2);
+      const formattedTime = timestamp.toLocaleTimeString(undefined, options);
+      return `${day}-${month}-${year} | ${formattedTime}`;
     }
   };
+  
   
   
   if (!conversationData) {
