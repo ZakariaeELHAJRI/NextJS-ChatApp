@@ -1,0 +1,33 @@
+# Ignore development and build artifacts
+node_modules
+.cache
+.next
+
+# Ignore version control files and directories
+.git
+.gitignore
+.svn
+CVS
+
+# Ignore project-specific files or directories
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env*  # Ignore any other environment files
+
+# Ignore test files
+*.spec.js
+*.test.js
+
+# Ignore logs
+logs
+
+# Ignore editor-specific files and directories
+.vscode
+.idea
+
+# Ignore package manager lock files
+yarn.lock
+package-lock.json
