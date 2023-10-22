@@ -1,18 +1,19 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useRef } from 'react';
 import Image from 'next/image';
 import styles from '@/components/ChatConversation/ChatConversation.module.css';
 import StartChat from '@/components/StartChat/StartChat';
 import {sendWebSocketMessage , recieveWebSocketNewConversation } from '@/app/Utils/websocket';
 import { useWebSocket } from '@/context/WebSocketContext';
 import { format, isToday , parse } from 'date-fns';
+import { all } from 'axios';
 
 
 export default function Conversation({ conversationData ,messagesData}) {
   const [messageInput, setMessageInput] = useState('');
   const [allMessages, setMessages] = useState([]);
   const {socket , messages  } = useWebSocket();
-
+  const lastMessageRef = useRef();
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -33,8 +34,12 @@ export default function Conversation({ conversationData ,messagesData}) {
         message.conversation_id = null;
       }
     });
-         
-  }, [ messages]);
+    // Scroll to the last message when messages update
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: 'auto' });
+    }
+
+  }, [ messages , allMessages]);
 
   // Send a message to the server
   const sendMessage = () => {
@@ -124,15 +129,16 @@ export default function Conversation({ conversationData ,messagesData}) {
       </div>
       <div className={styles['chat-conversation-body']}>
       <div className={styles['chat-conversation-body-message']}>
-     {allMessages.map((message, messageIndex) => (
-      <div
-        key={messageIndex}
-        className={`${styles['chat-conversation-body-message-item']} ${
-          message.sender_id === conversationData.current_user_id
-            ? styles['right-message']
-            : styles['left-message']
-        }`}
-      >
+      {allMessages.map((message, messageIndex) => (
+          <div
+            key={messageIndex}
+            ref={messageIndex === allMessages.length - 1 ? lastMessageRef : null} // Set the ref to the last message
+            className={`${styles['chat-conversation-body-message-item']} ${
+              message.sender_id === conversationData.current_user_id
+                ? styles['right-message']
+                : styles['left-message']
+            }`}
+          >
         {message.sender_id === conversationData.current_user_id && (
           <div className={styles['chat-conversation-body-message-item-timestamp']}>
             {formatMessageTime(message.time)}
