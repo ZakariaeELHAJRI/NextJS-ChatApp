@@ -127,8 +127,8 @@ export default function Conversation({ conversationData ,messagesData}) {
           </div>
         </div>
       </div>
-      <div className={styles['chat-conversation-body']}>
-      <div className={styles['chat-conversation-body-message']}>
+      <div className={ `${styles['chat-conversation-body']}  ${styles["customScroll"]}` }>
+      <div className={` ${styles['chat-conversation-body-message']} `}>
       {allMessages.map((message, messageIndex) => (
           <div
             key={messageIndex}
