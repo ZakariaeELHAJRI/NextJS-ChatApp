@@ -150,4 +150,22 @@
     padding: 10px 15px;
     cursor: pointer;
   }
-  
+  .customScroll::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 20px;
+	background-color: #F5F5F5;
+}
+
+.customScroll::-webkit-scrollbar
+{
+	width: 8px;
+
+	background-color: #F5F5F5;
+}
+
+.customScroll::-webkit-scrollbar-thumb
+{
+    border-radius: 20px;
+	background-color: #b8b4b480;
+}
