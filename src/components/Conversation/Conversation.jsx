@@ -5,6 +5,8 @@ import styles from '@/components/ChatConversation/ChatConversation.module.css';
 import StartChat from '@/components/StartChat/StartChat';
 import {sendWebSocketMessage , recieveWebSocketNewConversation } from '@/app/Utils/websocket';
 import { useWebSocket } from '@/context/WebSocketContext';
+import { format, isToday , parse } from 'date-fns';
+
 
 export default function Conversation({ conversationData ,messagesData}) {
   const [messageInput, setMessageInput] = useState('');
@@ -38,13 +40,13 @@ export default function Conversation({ conversationData ,messagesData}) {
   const sendMessage = () => {
     if (!messageInput.trim()) return;
   
-  
+    
     const newMessage = {
       event: 'message',
       content: messageInput,
       sender_id: conversationData.current_user_id,
       receiver_id: conversationData.friend_id,
-      time: new Date().toLocaleString(),
+      time: new Date(),
       conversation_id: conversationData.id,
       is_read: false,
     };
@@ -59,36 +61,44 @@ export default function Conversation({ conversationData ,messagesData}) {
   
     setMessageInput('');
   };
-  const customFormatTimestamp = (time) => {
-    // Try to parse the timestamp
-    const timestampDate = new Date(time);
-  
-    // Check if the parsed date is valid
-    if (!isNaN(timestampDate.getTime())) {
-      return formatTimestamp(timestampDate);
-    } else {
-      // If the timestamp is not valid, return an error
-      return 'Invalid Timestamp';
-    }
-  };
-  
-  const formatTimestamp = (timestamp) => {
+  function formatMessageTime(time) {
     const today = new Date();
-    const options = {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true, // Use a 12-hour clock
-    };
-    if (timestamp.toDateString() === today.toDateString()) {
-      return timestamp.toLocaleTimeString(undefined, options);
-    } else {
-      const day = timestamp.getDate().toString().padStart(2, '0');
-      const month = (timestamp.getMonth() + 1).toString().padStart(2, '0');
-      const year = timestamp.getFullYear().toString().substring(2);
-      const formattedTime = timestamp.toLocaleTimeString(undefined, options);
-      return `${day}-${month}-${year} | ${formattedTime}`;
+    const messageTime = new Date(time);
+    console.log('time', time);
+    console.log('messageTime', messageTime);
+    console.log('today', today);
+  
+    if (!isNaN(messageTime.getTime())) { // Check if parsing was successful
+     
+  
+      if (messageTime.toDateString() === today.toDateString()) {
+        // Display only the time in the format 'HH:mm'
+        const formattedTime = messageTime.toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        return formattedTime;
+      }
+      else
+      {
+        // Display date and time in the format 'dd-MM-yyyy | HH:mm:ss'
+        const formattedTime = messageTime.toLocaleString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        return formattedTime;
+      } 
     }
-  };
+  
+    // Return a default message if the time couldn't be parsed or is in the past
+    return 'Invalid time';
+  }
+  
+  
+  
   
   if (!conversationData) {
     return <StartChat />;
@@ -125,7 +135,7 @@ export default function Conversation({ conversationData ,messagesData}) {
       >
         {message.sender_id === conversationData.current_user_id && (
           <div className={styles['chat-conversation-body-message-item-timestamp']}>
-            {customFormatTimestamp(message.time)}
+            {formatMessageTime(message.time)}
           </div>
         )}
         <div className={styles['chat-conversation-body-message-item-user']}>
@@ -135,7 +145,7 @@ export default function Conversation({ conversationData ,messagesData}) {
         </div>
         {message.sender_id !== conversationData.current_user_id && (
           <div className={styles['chat-conversation-body-message-item-timestamp']}>
-            {customFormatTimestamp(message.time)}
+            {formatMessageTime(message.time)}
           </div>
         )}
       </div>
